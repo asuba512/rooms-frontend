@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 
 export const getUsers = createAsyncThunk('users/getAll', (arg, thunkAPI) => {
     return axios
-        .get('http://wap-rooms.herokuapp.com/api/user')
+        .get('https://wap-rooms.herokuapp.com/api/user')
         .then((response) => {
             return {
                 users: response.data,
@@ -25,7 +25,7 @@ export const deleteUser = createAsyncThunk(
     'users/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`http://wap-rooms.herokuapp.com/api/user/${id}`)
+            .delete(`https://wap-rooms.herokuapp.com/api/user/${id}`)
             .then((response) => {
                 return id
             })
@@ -46,7 +46,7 @@ export const deleteBulkUsers = createAsyncThunk(
     'users/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`http://wap-rooms.herokuapp.com/api/user`, { data: ids })
+            .delete(`https://wap-rooms.herokuapp.com/api/user`, { data: ids })
             .then((response) => {
                 return ids
             })

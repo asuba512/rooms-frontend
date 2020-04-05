@@ -6,7 +6,7 @@ export const getCourses = createAsyncThunk(
     'courses/getAll',
     (arg, thunkAPI) => {
         return axios
-            .get('http://wap-rooms.herokuapp.com/api/subject')
+            .get('https://wap-rooms.herokuapp.com/api/subject')
             .then((response) => {
                 return {
                     courses: response.data,
@@ -28,7 +28,7 @@ export const deleteCourse = createAsyncThunk(
     'courses/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`http://wap-rooms.herokuapp.com/api/subject/${id}`)
+            .delete(`https://wap-rooms.herokuapp.com/api/subject/${id}`)
             .then((response) => {
                 return id
             })
@@ -49,7 +49,7 @@ export const deleteBulkCourses = createAsyncThunk(
     'courses/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`http://wap-rooms.herokuapp.com/api/subject`, { data: ids })
+            .delete(`https://wap-rooms.herokuapp.com/api/subject`, { data: ids })
             .then((response) => {
                 return ids
             })

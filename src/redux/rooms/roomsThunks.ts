@@ -6,7 +6,7 @@ const UNEXPECTED_ERROR =
     'Unexpected error in our backend service. Please, try again later.'
 export const getRooms = createAsyncThunk('rooms/getAll', (arg, thunkAPI) => {
     return axios
-        .get('http://wap-rooms.herokuapp.com/api/room')
+        .get('https://wap-rooms.herokuapp.com/api/room')
         .then((response) => {
             return response.data
         })
@@ -21,7 +21,7 @@ export const getRoomById = createAsyncThunk(
     'rooms/getById',
     (id: number, thunkAPI) => {
         return axios
-            .get(`http://wap-rooms.herokuapp.com/api/room/${id}`)
+            .get(`https://wap-rooms.herokuapp.com/api/room/${id}`)
             .then((response) => {
                 return response.data
             })
@@ -37,7 +37,7 @@ export const getRoomSchedule = createAsyncThunk(
     'rooms/getSchedule',
     ({ id, start, end }: { id: number; start: Date; end: Date }, thunkAPI) => {
         return axios
-            .get(`http://wap-rooms.herokuapp.com/api/room/${id}/schedule`, {
+            .get(`https://wap-rooms.herokuapp.com/api/room/${id}/schedule`, {
                 params: { start: start.toISOString(), end: end.toISOString() },
             })
             .then((response) => {
@@ -55,7 +55,7 @@ export const deleteRoom = createAsyncThunk(
     'rooms/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`http://wap-rooms.herokuapp.com/api/room/${id}`)
+            .delete(`https://wap-rooms.herokuapp.com/api/room/${id}`)
             .then((response) => {
                 return id
             })
@@ -74,7 +74,7 @@ export const deleteBulkRooms = createAsyncThunk(
     'rooms/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`http://wap-rooms.herokuapp.com/api/room`, { data: ids })
+            .delete(`https://wap-rooms.herokuapp.com/api/room`, { data: ids })
             .then((response) => {
                 return ids
             })

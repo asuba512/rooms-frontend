@@ -10,7 +10,7 @@ export const getUserToken = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .post('http://wap-rooms.herokuapp.com/api/token', {
+            .post('https://wap-rooms.herokuapp.com/api/token', {
                 username,
                 password,
             })
