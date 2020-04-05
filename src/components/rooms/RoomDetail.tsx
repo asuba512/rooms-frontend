@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 
@@ -7,6 +7,7 @@ import useTheme from '@material-ui/core/styles/useTheme'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import IconButton from '@material-ui/core/IconButton'
@@ -24,6 +25,9 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
 
+import TextField from '@material-ui/core/TextField'
+import Switch from '@material-ui/core/Switch'
+
 import Slide from '@material-ui/core/Slide'
 import Zoom from '@material-ui/core/Zoom'
 import { TransitionProps } from '@material-ui/core/transitions'
@@ -35,7 +39,6 @@ import { useDispatch } from 'react-redux'
 import { getRoomSchedule } from '../../redux/rooms/roomsThunks'
 
 import './react-big-calendar.css'
-import { Card } from '@material-ui/core'
 
 const localizer = momentLocalizer(moment)
 
@@ -47,6 +50,9 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         appBar: {
             position: 'relative',
+        },
+        content: {
+            padding: 0
         },
         gridRow: {
             width: '100%',
@@ -107,6 +113,8 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
     const classes = useStyles()
     const useFullScreen = useMediaQuery(useTheme().breakpoints.down('md'))
 
+    const [isEdit, setIsEdit] = useState(false)
+
     const dispatch = useDispatch()
     useEffect(() => {
         if (room) {
@@ -131,7 +139,6 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
             }
         }) || []
 
-    // @ts-ignore
     return (
         <div>
             <Dialog
@@ -139,6 +146,7 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
                 maxWidth="xl"
                 fullWidth
                 fullScreen={useFullScreen}
+                scroll='paper'
                 open={room !== undefined}
                 onClose={handleClose}
                 TransitionComponent={
@@ -147,6 +155,9 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
             >
                 <AppBar className={classes.appBar}>
                     <Toolbar>
+                        <Typography variant="h6" className={classes.title}>
+                            Room Detail
+                        </Typography>
                         <IconButton
                             edge="start"
                             color="inherit"
@@ -155,39 +166,50 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
                         >
                             <CloseIcon />
                         </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Room Detail
-                        </Typography>
                     </Toolbar>
                 </AppBar>
+                <DialogContent className={classes.content}>
                 <Grid container className={classes.gridRow}>
                     <Grid item className={classes.gridColumn}>
+                        <div>
                         <Paper className={classes.paper}>
-                            <Typography variant="h6">
-                                Room {room?.name}
-                            </Typography>
+                            {isEdit ? (
+                                <TextField label='Name' size="medium" value={room?.name}/>
+                            ) : (
+                                <Typography variant="h6" style={{padding: "8px 0"}}>
+                                    Room {room?.name}
+                                </Typography>
+                            )}
                             <List>
                                 <ListItem>
                                     <ListItemAvatar>
                                         <Avatar>
-                                            <EventSeatIcon />
+                                            <EventSeatIcon/>
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText
-                                        primary={room?.capacity}
-                                        secondary="Capacity"
-                                    />
+                                    {isEdit ? (
+                                        <TextField label='Capacity' size="medium" value={room?.capacity} style={{margin: "4px 0"}}/>
+                                    ) : (
+                                        <ListItemText
+                                            primary={room?.capacity}
+                                            secondary="Capacity"
+                                        />
+                                    )}
                                 </ListItem>
-                                <ListItem>
+                                <ListItem >
                                     <ListItemAvatar>
                                         <Avatar>
                                             <RoomIcon />
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText
-                                        primary={room?.location}
-                                        secondary="Location"
-                                    />
+                                    {isEdit ? (
+                                        <TextField label='Location' size="medium" value={room?.location} style={{margin: "4px 0"}}/>
+                                    ) : (
+                                        <ListItemText
+                                            primary={room?.location}
+                                            secondary="Location"
+                                        />
+                                    )}
                                 </ListItem>
                                 <ListItem>
                                     <ListItemAvatar>
@@ -195,15 +217,22 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
                                             <MeetingRoomIcon />
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText
-                                        primary={mapRoomTypeEnumToString(
-                                            room?.roomType
-                                        )}
-                                        secondary="Type"
-                                    />
+                                    {isEdit ? (
+                                        <TextField label='Type' size="medium" value={room?.roomType} style={{margin: "4px 0"}}/>
+                                    ) : (
+                                        <ListItemText
+                                            primary={mapRoomTypeEnumToString(
+                                                room?.roomType
+                                            )}
+                                            secondary="Type"
+                                        />
+                                    )}
+                                </ListItem>
+                                <ListItem>
+                                    Toggle edit (temporary) <Switch checked={isEdit} onChange={() => setIsEdit(!isEdit)} />
                                 </ListItem>
                             </List>
-                        </Paper>
+                        </Paper></div>
                     </Grid>
                     <Grid item className={classes.gridColumn}>
                         <TableComponent
@@ -221,8 +250,6 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
                             defaultSort="type"
                         />
                     </Grid>
-                </Grid>
-                <Grid container className={classes.gridRow}>
                     <Grid item className={classes.gridColumnFill}>
                         <Paper className={classes.paper}>
                             <Typography variant="h6">Room Schedule</Typography>
@@ -264,6 +291,7 @@ function RoomDetail({ room, handleClose }: FullScreenDialogProps) {
                         </Paper>
                     </Grid>
                 </Grid>
+                </DialogContent>
             </Dialog>
         </div>
     )
