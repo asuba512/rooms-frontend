@@ -10,7 +10,7 @@ import {
     deleteRoom,
     deleteBulkRooms,
     getRoomById,
-    getRoomSchedule,
+    getRoomSchedule, editRoom,
 } from './roomsThunks'
 
 const initialState = {
@@ -52,6 +52,24 @@ export const roomsSlice = createSlice({
         ) => {
             if (state.room) {
                 state.room.schedule = payload
+            }
+        },
+        [editRoom.fulfilled.type]: (
+            state,
+            {payload}: PayloadAction<RoomDetailInterface>
+        ) => {
+            if (state.room && state.room.id === payload.id) {
+                state.room = {
+                    ...state.room,
+                    ...payload,
+                }
+            }
+            if (state.rooms) {
+                const index = state.rooms.findIndex(room => room.id === payload.id)
+                state.rooms[index] = {
+                    ...state.rooms[index],
+                    ...payload
+                }
             }
         },
         [deleteRoom.fulfilled.type]: (

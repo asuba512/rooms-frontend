@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
         content: {
             width: '100vw',
             padding: theme.spacing(3),
+            [theme.breakpoints.down('sm')]: {
+                padding: 0,
+            },
         },
         // necessary for content to be below app bar
         toolbarPadding: theme.mixins.toolbar,

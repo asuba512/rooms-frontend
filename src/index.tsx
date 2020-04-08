@@ -33,7 +33,7 @@ const theme = createMuiTheme({
 ReactDOM.render(
     <Provider store={store}>
         <ThemeProvider theme={theme}>
-            <LoadingBar style={{ zIndex: 10000 }} showFastActions />
+            <LoadingBar style={{ zIndex: 10000 }} showFastActions updateTime={1}/>
             <App />
             <ToastContainer autoClose={false} />
         </ThemeProvider>

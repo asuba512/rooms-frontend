@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {useCallback, useEffect} from 'react'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
             marginBottom: theme.spacing(2),
         },
         table: {
-            minWidth: 750,
+            minWidth: 300,
         },
         row: {
             animation: '1s ease-out 0s FadeIn',
@@ -87,14 +87,8 @@ function TableComponent({
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
-    useEffect(() => {
-        setSelected([])
-        handleChangeFilter(filter)
-    }, [data])
-
     const keys = Object.keys(cells)
     const additionalColspan = (onViewDetail ? 1 : 0) + (onDelete ? 1 : 0)
-    const colspan = keys.length + 1 + additionalColspan
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -152,29 +146,42 @@ function TableComponent({
         }
     }
 
-    const handleChangeFilter = (filter_: string) => {
-        setFilter(filter_)
-        setPage(0)
-        if (filter.length === 0) {
-            setFilteredData(data)
-        } else {
-            setFilteredData(
-                data.filter((row) => {
-                    const splitFilter = filter_.split(':')
-                    const keyToCompare =
-                        splitFilter.length > 1 ? splitFilter[0] : null
-                    const valueToCompare =
-                        splitFilter.length > 1
-                            ? splitFilter[1].toLowerCase().trim()
-                            : splitFilter[0].toLowerCase().trim()
-                    return Object.entries(row)
-                        .map(([key, value]) => {
-                            if (keyToCompare) {
-                                if (key === keyToCompare) {
+    const handleChangeFilter = useCallback(
+        (filter_: string) => {
+            setFilter(filter_)
+            setPage(0)
+            if (filter.length === 0) {
+                setFilteredData(data)
+            } else {
+                setFilteredData(
+                    data.filter((row) => {
+                        const splitFilter = filter_.split(':')
+                        const keyToCompare =
+                            splitFilter.length > 1 ? splitFilter[0] : null
+                        const valueToCompare =
+                            splitFilter.length > 1
+                                ? splitFilter[1].toLowerCase().trim()
+                                : splitFilter[0].toLowerCase().trim()
+                        return Object.entries(row)
+                            .map(([key, value]) => {
+                                if (keyToCompare) {
+                                    if (key === keyToCompare) {
+                                        if (typeof value == 'number') {
+                                            return (
+                                                value.toString() === valueToCompare
+                                            )
+                                        } else if (typeof value == 'string') {
+                                            return value
+                                                ?.toLowerCase()
+                                                .includes(valueToCompare)
+                                        } else {
+                                            return false
+                                        }
+                                    }
+                                    return false
+                                } else {
                                     if (typeof value == 'number') {
-                                        return (
-                                            value.toString() === valueToCompare
-                                        )
+                                        return value.toString() === valueToCompare
                                     } else if (typeof value == 'string') {
                                         return value
                                             ?.toLowerCase()
@@ -183,24 +190,12 @@ function TableComponent({
                                         return false
                                     }
                                 }
-                                return false
-                            } else {
-                                if (typeof value == 'number') {
-                                    return value.toString() === valueToCompare
-                                } else if (typeof value == 'string') {
-                                    return value
-                                        ?.toLowerCase()
-                                        .includes(valueToCompare)
-                                } else {
-                                    return false
-                                }
-                            }
-                        })
-                        .some((value) => value)
-                })
-            )
-        }
-    }
+                            })
+                            .some((value) => value)
+                    })
+                )
+            }
+        }, [data, filter])
 
     const getRowEntries = (row: { [key: string]: any }, keys: string[]) => {
         const entries: [string, any][] = []
@@ -213,8 +208,10 @@ function TableComponent({
     const isSelected = (id: number) => selected.indexOf(id) !== -1
     const isDeleted = (id: number) => deleted.indexOf(id) !== -1
 
-    const emptyRows =
-        rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage)
+    useEffect(() => {
+        setSelected([])
+        handleChangeFilter(filter)
+    }, [data, filter, handleChangeFilter])
 
     return (
         <div className={classes.root}>

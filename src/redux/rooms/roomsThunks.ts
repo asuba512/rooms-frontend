@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import {RoomDetailInterface} from './type'
 
 const UNEXPECTED_ERROR =
     'Unexpected error in our backend service. Please, try again later.'
@@ -35,10 +36,10 @@ export const getRoomById = createAsyncThunk(
 
 export const getRoomSchedule = createAsyncThunk(
     'rooms/getSchedule',
-    ({ id, start, end }: { id: number; start: Date; end: Date }, thunkAPI) => {
+    ({ id, start, end }: { id: number; start: string; end: string }, thunkAPI) => {
         return axios
             .get(`https://wap-rooms.herokuapp.com/api/room/${id}/schedule`, {
-                params: { start: start.toISOString(), end: end.toISOString() },
+                params: { start: start, end: end },
             })
             .then((response) => {
                 return response.data
@@ -48,6 +49,26 @@ export const getRoomSchedule = createAsyncThunk(
                 toast.error(UNEXPECTED_ERROR)
                 return thunkAPI.rejectWithValue(errorCode)
             })
+    }
+)
+
+export const editRoom = createAsyncThunk(
+    "rooms/editRoom",
+    (arg: RoomDetailInterface, thunksAPI) => {
+        const {id, name, capacity, location, roomType} = arg
+        return axios
+            .put(`https://wap-rooms.herokuapp.com/api/room/${id}/`, {
+                name,
+                capacity,
+                location,
+                roomType,
+            })
+            .then(response => {
+            return arg
+        })
+        .catch((error) => {
+            return thunksAPI.rejectWithValue(false)
+        })
     }
 )
 
