@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
     BrowserRouter as Router,
@@ -13,14 +13,22 @@ import useStyles from './utils/useStyles'
 import { CssBaseline } from '@material-ui/core'
 import SideMenu from './components/SideMenu'
 import RoomsTable from './components/rooms/RoomsTable'
-import CoursesComponent from './components/CoursesComponent'
+import CoursesTable from './components/courses/CoursesTable'
 import { RootState } from './redux/type'
-import UsersComponent from './components/UsersComponent'
+import UsersTable from './components/users/UsersTable'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
+import useTheme from '@material-ui/core/styles/useTheme'
 
 function App() {
     const classes = useStyles()
     const isAuthorized = useSelector((state: RootState) => state.auth?.id)
     const [menuOpen, setMenuOpen] = useState(true)
+    const isSmall = useMediaQuery(useTheme().breakpoints.down('sm'))
+
+    useEffect(() => {
+        setMenuOpen(!isSmall)
+    }, [isSmall])
+
     return (
         <>
             <CssBaseline />
@@ -54,11 +62,11 @@ function App() {
                             </Route>
                             <Route path="/users">
                                 {!isAuthorized && <Redirect to="/login" />}
-                                <UsersComponent />
+                                <UsersTable />
                             </Route>
                             <Route path="/courses">
                                 {!isAuthorized && <Redirect to="/login" />}
-                                <CoursesComponent />
+                                <CoursesTable />
                             </Route>
                             <Route path="/rooms">
                                 {!isAuthorized && <Redirect to="/login" />}

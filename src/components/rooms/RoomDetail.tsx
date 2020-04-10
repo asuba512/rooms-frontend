@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react'
-import {useDispatch} from 'react-redux'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import useTheme from '@material-ui/core/styles/useTheme'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 
@@ -31,15 +31,15 @@ import MenuItem from '@material-ui/core/MenuItem'
 
 import Slide from '@material-ui/core/Slide'
 import Zoom from '@material-ui/core/Zoom'
-import {TransitionProps} from '@material-ui/core/transitions'
+import { TransitionProps } from '@material-ui/core/transitions'
 
-import {RoomDetailInterface} from '../../redux/rooms/type'
-import {mapRoomTypeEnumToString} from '../../redux/rooms/utils'
+import { IRoomDetail } from '../../redux/rooms/type'
+import { mapRoomTypeEnumToString } from '../../redux/rooms/utils'
 import TableComponent from '../TableComponent/TableComponent'
 
 import './react-big-calendar.css'
 import Schedule from './Schedule'
-import {editRoom} from '../../redux/rooms/roomsThunks'
+import { editRoom } from '../../redux/rooms/roomsThunks'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
             position: 'relative',
         },
         content: {
-            padding: 0
+            padding: 0,
         },
         gridRow: {
             width: '100%',
@@ -104,11 +104,12 @@ const ZoomTransition = React.forwardRef(function Transition(
 })
 
 interface FullScreenDialogProps {
-    room?: RoomDetailInterface
+    room?: IRoomDetail
+    isAdmin: boolean
     handleClose: () => void
 }
 
-function RoomDetail({room, handleClose}: FullScreenDialogProps) {
+function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
     const classes = useStyles()
     const useFullScreen = useMediaQuery(useTheme().breakpoints.down('md'))
 
@@ -153,14 +154,14 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
             if (!location) {
                 setLocationInvalid(true)
             }
-            if(roomType === undefined) {
+            if (roomType === undefined) {
                 setRoomTypeInvalid(true)
             }
             return
         }
         settAllValid()
 
-        dispatch(editRoom({id: room?.id, name, capacity, location, roomType}))
+        dispatch(editRoom({ id: room?.id, name, capacity, location, roomType }))
 
         setIsEdit(false)
         return
@@ -180,11 +181,11 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
     return (
         <div>
             <Dialog
-                PaperProps={{className: classes.root}}
+                PaperProps={{ className: classes.root }}
                 maxWidth="xl"
                 fullWidth
                 fullScreen={useFullScreen}
-                scroll='paper'
+                scroll="paper"
                 open={room !== undefined}
                 onClose={handleClose}
                 TransitionComponent={
@@ -202,7 +203,7 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
                             onClick={handleClose}
                             aria-label="close"
                         >
-                            <CloseIcon/>
+                            <CloseIcon />
                         </IconButton>
                     </Toolbar>
                 </AppBar>
@@ -211,44 +212,78 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
                         <Grid item className={classes.gridColumn}>
                             <div>
                                 <Paper className={classes.paper}>
-                                    <Toolbar disableGutters variant='dense'>
+                                    <Toolbar disableGutters variant="dense">
                                         {isEdit ? (
-                                            <TextField error={nameInvalid} label='Name' size="medium" value={name}
-                                                       onChange={(e) => setName(e.target.value)}/>
+                                            <TextField
+                                                error={nameInvalid}
+                                                label="Name"
+                                                size="medium"
+                                                value={name}
+                                                onChange={(e) =>
+                                                    setName(e.target.value)
+                                                }
+                                            />
                                         ) : (
-                                            <Typography variant="h6" style={{padding: "8px 0"}}>
+                                            <Typography
+                                                variant="h6"
+                                                style={{ padding: '8px 0' }}
+                                            >
                                                 Room {room?.name}
                                             </Typography>
                                         )}
-                                        <div style={{flexGrow: 1}}/>
+                                        <div style={{ flexGrow: 1 }} />
                                         {isEdit ? (
                                             <>
-                                                <IconButton onClick={() => handleSaveChanges()} color='primary'>
-                                                    <SaveIcon/>
+                                                <IconButton
+                                                    onClick={() =>
+                                                        handleSaveChanges()
+                                                    }
+                                                    color="primary"
+                                                >
+                                                    <SaveIcon />
                                                 </IconButton>
-                                                <IconButton onClick={handleCancel} color='secondary'>
-                                                    <CloseIcon/>
+                                                <IconButton
+                                                    onClick={handleCancel}
+                                                    color="secondary"
+                                                >
+                                                    <CloseIcon />
                                                 </IconButton>
                                             </>
                                         ) : (
-                                            <IconButton onClick={() => setIsEdit(true)}>
-                                                <EditIcon/>
-                                            </IconButton>
-                                        )
-                                        }
+                                            isAdmin && (
+                                                <IconButton
+                                                    onClick={() =>
+                                                        setIsEdit(true)
+                                                    }
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                            )
+                                        )}
                                     </Toolbar>
                                     <List>
                                         <ListItem>
                                             <ListItemAvatar>
                                                 <Avatar>
-                                                    <EventSeatIcon/>
+                                                    <EventSeatIcon />
                                                 </Avatar>
                                             </ListItemAvatar>
                                             {isEdit ? (
-                                                <TextField error={capacityInvalid} label='Capacity' type='number'
-                                                           size="medium" value={capacity}
-                                                           onChange={(e) => setCapacity(Number(e.target.value))}
-                                                           style={{margin: "4px 0"}}/>
+                                                <TextField
+                                                    error={capacityInvalid}
+                                                    label="Capacity"
+                                                    type="number"
+                                                    size="medium"
+                                                    value={capacity}
+                                                    onChange={(e) =>
+                                                        setCapacity(
+                                                            Number(
+                                                                e.target.value
+                                                            )
+                                                        )
+                                                    }
+                                                    style={{ margin: '4px 0' }}
+                                                />
                                             ) : (
                                                 <ListItemText
                                                     primary={room?.capacity}
@@ -259,14 +294,22 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
                                         <ListItem>
                                             <ListItemAvatar>
                                                 <Avatar>
-                                                    <RoomIcon/>
+                                                    <RoomIcon />
                                                 </Avatar>
                                             </ListItemAvatar>
                                             {isEdit ? (
-                                                <TextField error={locationInvalid} label='Location' size="medium"
-                                                           value={location}
-                                                           onChange={(e) => setLocation(e.target.value)}
-                                                           style={{margin: "4px 0"}}/>
+                                                <TextField
+                                                    error={locationInvalid}
+                                                    label="Location"
+                                                    size="medium"
+                                                    value={location}
+                                                    onChange={(e) =>
+                                                        setLocation(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    style={{ margin: '4px 0' }}
+                                                />
                                             ) : (
                                                 <ListItemText
                                                     primary={room?.location}
@@ -277,25 +320,44 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
                                         <ListItem>
                                             <ListItemAvatar>
                                                 <Avatar>
-                                                    <MeetingRoomIcon/>
+                                                    <MeetingRoomIcon />
                                                 </Avatar>
                                             </ListItemAvatar>
                                             {isEdit ? (
-                                                <TextField error={roomTypeInvalid} select label='Type' value={roomType}
-                                                           onChange={(e) => setRoomType(Number(e.target.value))}
-                                                           style={{margin: "4px 0"}}>
-                                                    <MenuItem value={0}>{mapRoomTypeEnumToString(
-                                                        0
-                                                    )}</MenuItem>
-                                                    <MenuItem value={1}>{mapRoomTypeEnumToString(
-                                                        1
-                                                    )}</MenuItem>
-                                                    <MenuItem value={2}>{mapRoomTypeEnumToString(
-                                                        2
-                                                    )}</MenuItem>
-                                                    <MenuItem value={3}>{mapRoomTypeEnumToString(
-                                                        3
-                                                    )}</MenuItem>
+                                                <TextField
+                                                    error={roomTypeInvalid}
+                                                    select
+                                                    label="Type"
+                                                    value={roomType}
+                                                    onChange={(e) =>
+                                                        setRoomType(
+                                                            Number(
+                                                                e.target.value
+                                                            )
+                                                        )
+                                                    }
+                                                    style={{ margin: '4px 0' }}
+                                                >
+                                                    <MenuItem value={0}>
+                                                        {mapRoomTypeEnumToString(
+                                                            0
+                                                        )}
+                                                    </MenuItem>
+                                                    <MenuItem value={1}>
+                                                        {mapRoomTypeEnumToString(
+                                                            1
+                                                        )}
+                                                    </MenuItem>
+                                                    <MenuItem value={2}>
+                                                        {mapRoomTypeEnumToString(
+                                                            2
+                                                        )}
+                                                    </MenuItem>
+                                                    <MenuItem value={3}>
+                                                        {mapRoomTypeEnumToString(
+                                                            3
+                                                        )}
+                                                    </MenuItem>
                                                 </TextField>
                                             ) : (
                                                 <ListItemText
@@ -307,16 +369,17 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
                                             )}
                                         </ListItem>
                                     </List>
-                                </Paper></div>
+                                </Paper>
+                            </div>
                         </Grid>
                         <Grid item className={classes.gridColumn}>
                             <TableComponent
                                 title="Equipment"
-                                data={room?.equipment || []}
+                                rowData={room?.equipment || []}
                                 cells={{
-                                    type: {title: 'Type', isNumeric: false},
-                                    brand: {title: 'Brand', isNumeric: false},
-                                    model: {title: 'Model', isNumeric: false},
+                                    type: { title: 'Type' },
+                                    brand: { title: 'Brand' },
+                                    model: { title: 'Model' },
                                     quantity: {
                                         title: 'Quantity',
                                         isNumeric: true,
@@ -327,7 +390,7 @@ function RoomDetail({room, handleClose}: FullScreenDialogProps) {
                         </Grid>
                         <Grid item className={classes.gridColumnFill}>
                             <Paper className={classes.paper}>
-                                <Schedule roomId={room?.id}/>
+                                <Schedule roomId={room?.id} />
                             </Paper>
                         </Grid>
                     </Grid>

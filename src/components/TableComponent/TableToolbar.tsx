@@ -15,21 +15,38 @@ import Tooltip from '@material-ui/core/Tooltip'
 import TextField from '@material-ui/core/TextField'
 import Clear from '@material-ui/icons/Clear'
 import Search from '@material-ui/icons/Search'
+import AddIcon from '@material-ui/icons/Add'
 
 import DeleteButton from '../DeleteButton'
+import { Button } from '@material-ui/core'
+import Divider from '@material-ui/core/Divider'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(1),
+            paddingRight: theme.spacing(2),
+            [theme.breakpoints.down('xs')]: {
+                paddingLeft: theme.spacing(1),
+                paddingRight: theme.spacing(1),
+            },
         },
         highlight: {
             color: theme.palette.secondary.main,
             backgroundColor: lighten(theme.palette.secondary.light, 0.85),
         },
+        selected: {
+            flex: '1 1 0',
+        },
         title: {
-            flex: '1 1 100%',
+            flex: '1 1 0',
+            [theme.breakpoints.down('xs')]: {
+                display: 'none',
+            },
+        },
+        divider: {
+            marginRight: theme.spacing(1),
+            marginLeft: theme.spacing(1),
         },
     })
 )
@@ -39,6 +56,8 @@ interface EnhancedTableToolbarProps {
     title: string
     filter: string
     filterChanged: (filter: string) => void
+    canAddNewItem?: boolean
+    onAddNew?: (data: any) => void
     onDeleteBulk: () => void
 }
 
@@ -47,6 +66,8 @@ const TableToolbar = ({
     title,
     filter,
     filterChanged,
+    canAddNewItem,
+    onAddNew,
     onDeleteBulk,
 }: EnhancedTableToolbarProps) => {
     const classes = useStyles()
@@ -59,7 +80,7 @@ const TableToolbar = ({
         >
             {numSelected > 0 ? (
                 <Typography
-                    className={classes.title}
+                    className={classes.selected}
                     color="inherit"
                     variant="subtitle1"
                     component="div"
@@ -67,14 +88,20 @@ const TableToolbar = ({
                     {numSelected} selected
                 </Typography>
             ) : (
-                <Typography
-                    className={classes.title}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    {title}
-                </Typography>
+                <>
+                    <Typography
+                        className={classes.title}
+                        variant="h6"
+                        id="tableTitle"
+                        component="div"
+                    >
+                        {title}
+                    </Typography>
+                    <Divider
+                        className={classes.divider}
+                        orientation="vertical"
+                    />
+                </>
             )}
             {numSelected > 0 && onDeleteBulk ? (
                 <Tooltip title="Delete all selected" arrow>
@@ -87,6 +114,7 @@ const TableToolbar = ({
                     <Tooltip arrow title="Search">
                         <TextField
                             placeholder="Search"
+                            fullWidth={true}
                             value={filter}
                             onChange={(e) => filterChanged(e.target.value)}
                             InputProps={{
@@ -111,6 +139,23 @@ const TableToolbar = ({
                             }}
                         />
                     </Tooltip>
+                    {canAddNewItem && onAddNew && (
+                        <>
+                            <Divider
+                                className={classes.divider}
+                                orientation="vertical"
+                            />
+                            <Tooltip arrow title="Add New">
+                                <Button
+                                    size="large"
+                                    startIcon={<AddIcon />}
+                                    onClick={onAddNew}
+                                >
+                                    Add
+                                </Button>
+                            </Tooltip>
+                        </>
+                    )}
                 </>
             )}
         </Toolbar>

@@ -8,10 +8,11 @@ import Checkbox from '@material-ui/core/Checkbox'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
 
 import { Order } from '../../utils/sorting'
+import { ICells } from './type'
 
 interface EnhancedTableProps {
     classes: ClassNameMap
-    cells: { [key: string]: { title: string; isNumeric: boolean } }
+    cells: ICells
     selectionAllowed: boolean
     numSelected: number
     onSelectAllClick: (

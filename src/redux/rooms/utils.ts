@@ -1,5 +1,5 @@
 export const mapRoomTypeEnumToString = (roomType: number | undefined) => {
-    switch (roomType) {
+    switch (Number(roomType)) {
         case 0:
             return 'Lecture Room'
         case 1:
@@ -11,4 +11,11 @@ export const mapRoomTypeEnumToString = (roomType: number | undefined) => {
         default:
             return 'Unknown'
     }
+}
+
+export const roomTypesAsObject = {
+    0: 'Lecture Room',
+    1: 'Laboratory',
+    2: 'Seminar Room',
+    3: 'Meeting Room',
 }

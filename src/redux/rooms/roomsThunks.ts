@@ -1,10 +1,9 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, ThunkAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import {RoomDetailInterface} from './type'
+import { IRoomDetail, IRoom } from './type'
+import { UNEXPECTED_ERROR } from '../constant'
 
-const UNEXPECTED_ERROR =
-    'Unexpected error in our backend service. Please, try again later.'
 export const getRooms = createAsyncThunk('rooms/getAll', (arg, thunkAPI) => {
     return axios
         .get('https://wap-rooms.herokuapp.com/api/room')
@@ -36,7 +35,10 @@ export const getRoomById = createAsyncThunk(
 
 export const getRoomSchedule = createAsyncThunk(
     'rooms/getSchedule',
-    ({ id, start, end }: { id: number; start: string; end: string }, thunkAPI) => {
+    (
+        { id, start, end }: { id: number; start: string; end: string },
+        thunkAPI
+    ) => {
         return axios
             .get(`https://wap-rooms.herokuapp.com/api/room/${id}/schedule`, {
                 params: { start: start, end: end },
@@ -52,23 +54,38 @@ export const getRoomSchedule = createAsyncThunk(
     }
 )
 
-export const editRoom = createAsyncThunk(
-    "rooms/editRoom",
-    (arg: RoomDetailInterface, thunksAPI) => {
-        const {id, name, capacity, location, roomType} = arg
+export const createRoom = createAsyncThunk(
+    'rooms/createRoom',
+    (arg: IRoom, thunksAPI) => {
         return axios
-            .put(`https://wap-rooms.herokuapp.com/api/room/${id}/`, {
-                name,
-                capacity,
-                location,
-                roomType,
+            .post('https://wap-rooms.herokuapp.com/api/room/', arg)
+            .then((response) => {
+                const id = response.data
+                return {
+                    ...arg,
+                    id,
+                }
             })
-            .then(response => {
-            return arg
-        })
-        .catch((error) => {
-            return thunksAPI.rejectWithValue(false)
-        })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunksAPI.rejectWithValue(false)
+            })
+    }
+)
+
+export const editRoom = createAsyncThunk(
+    'rooms/editRoom',
+    (arg: IRoomDetail, thunksAPI) => {
+        const { id, ...data } = arg
+        return axios
+            .put(`https://wap-rooms.herokuapp.com/api/room/${id}/`, data)
+            .then((response) => {
+                return arg
+            })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunksAPI.rejectWithValue(false)
+            })
     }
 )
 

@@ -60,3 +60,14 @@ td div {
     padding-top: 0;
     padding-bottom: 0;
 }
+
+tr {
+    transition: opacity 0.5s 0s, filter 0.5s 0s;
+    opacity: 1;
+}
+
+tr.rowInactive {
+    pointer-events: none;
+    filter: blur(1px);
+    opacity: 0.15;
+}

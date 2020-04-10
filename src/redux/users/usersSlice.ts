@@ -1,23 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { UsersState } from './type'
-import { deleteBulkUsers, deleteUser, getUsers } from './usersThunks'
+import { IUser, UsersState } from './type'
+import {
+    createUser,
+    deleteBulkUsers,
+    deleteUser,
+    getUsers,
+} from './usersThunks'
+
+const initialState = {
+    users: null,
+    user: null,
+    errorCode: null,
+}
 
 export const usersSlice = createSlice({
     name: 'users',
-    initialState: null as UsersState | null,
+    initialState: initialState as UsersState,
     reducers: {},
     extraReducers: {
         [getUsers.fulfilled.type]: (
             state,
-            { payload }: PayloadAction<UsersState>
+            { payload }: PayloadAction<IUser[]>
         ) => {
-            return payload
+            state.users = payload
         },
         [getUsers.rejected.type]: (
             state,
-            { payload }: PayloadAction<UsersState>
+            { payload }: PayloadAction<number>
         ) => {
-            return payload
+            state.errorCode = payload
+        },
+        [createUser.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IUser>
+        ) => {
+            if (state.users) {
+                state.users.push(payload)
+            }
         },
         [deleteUser.fulfilled.type]: (
             state,
@@ -25,8 +44,9 @@ export const usersSlice = createSlice({
         ) => {
             if (state && state.users) {
                 return {
-                    errorCode: null,
                     users: state.users.filter((user) => user.id !== payload),
+                    user: null,
+                    errorCode: null,
                 }
             }
             return state
@@ -37,10 +57,11 @@ export const usersSlice = createSlice({
         ) => {
             if (state && state.users) {
                 return {
-                    errorCode: null,
                     users: state.users.filter(
                         (user) => !payload.includes(user.id)
                     ),
+                    user: null,
+                    errorCode: null,
                 }
             }
             return state

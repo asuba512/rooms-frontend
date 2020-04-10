@@ -1,23 +1,25 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import TableComponent from './TableComponent/TableComponent'
-import { RootState } from '../redux/type'
+import TableComponent from '../TableComponent/TableComponent'
+import { RootState } from '../../redux/type'
 import {
     getCourses,
     deleteBulkCourses,
     deleteCourse,
-} from '../redux/courses/coursesThunks'
+    createCourse,
+} from '../../redux/courses/coursesThunks'
+import { ICourse } from '../../redux/courses/type'
 
-function CoursesComponent() {
+function CoursesTable() {
     const dispatch = useDispatch()
-    const coursesState = useSelector((state: RootState) => state.courses)
+    const coursesState = useSelector((state: RootState) => state.coursesAPI)
     const isAdmin = useSelector(
         (state: RootState) => state.auth?.role === 'admin'
     )
     const courses = coursesState?.courses || []
     const cells = {
-        abbreviation: { title: 'Abbreviation', isNumeric: false },
-        name: { title: 'Name', isNumeric: false },
+        abbreviation: { title: 'Abbreviation' },
+        name: { title: 'Name' },
         credits: { title: 'Credits', isNumeric: true },
     }
 
@@ -27,6 +29,10 @@ function CoursesComponent() {
 
     const onViewDetailHandler = (id: number) => {
         console.log(id)
+    }
+
+    const onAddNewHandler = (data: ICourse) => {
+        dispatch(createCourse(data))
     }
 
     const onDeleteHandler = (id: number) => {
@@ -40,14 +46,16 @@ function CoursesComponent() {
     return (
         <TableComponent
             title="Courses"
-            data={courses}
+            rowData={courses}
             cells={cells}
             defaultSort="abbreviation"
+            uniqueKey="abbreviation"
             onViewDetail={onViewDetailHandler}
+            onAddNew={isAdmin ? onAddNewHandler : undefined}
             onDelete={isAdmin ? onDeleteHandler : undefined}
             onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}
         />
     )
 }
 
-export default CoursesComponent
+export default CoursesTable

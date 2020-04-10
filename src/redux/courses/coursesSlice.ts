@@ -1,31 +1,51 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { CoursesState } from './type'
-import { deleteBulkCourses, deleteCourse, getCourses } from './coursesThunks'
+import { ICourse, CoursesState } from './type'
+import {
+    createCourse,
+    deleteBulkCourses,
+    deleteCourse,
+    getCourses,
+} from './coursesThunks'
+
+const initialState = {
+    courses: null,
+    course: null,
+    errorCode: null,
+}
 
 export const coursesSlice = createSlice({
     name: 'courses',
-    initialState: null as CoursesState | null,
+    initialState: initialState as CoursesState,
     reducers: {},
     extraReducers: {
         [getCourses.fulfilled.type]: (
             state,
-            { payload }: PayloadAction<CoursesState>
+            { payload }: PayloadAction<ICourse[]>
         ) => {
-            return payload
+            state.courses = payload
         },
         [getCourses.rejected.type]: (
             state,
-            { payload }: PayloadAction<CoursesState>
+            { payload }: PayloadAction<number>
         ) => {
-            return payload
+            state.errorCode = payload
+        },
+        [createCourse.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<ICourse>
+        ) => {
+            if (state.courses) {
+                state.courses.push(payload)
+            }
         },
         [deleteCourse.fulfilled.type]: (
             state,
             { payload }: PayloadAction<number>
         ) => {
-            if (state && state.courses) {
+            if (state.courses) {
                 return {
                     errorCode: null,
+                    course: null,
                     courses: state.courses.filter(
                         (course) => course.id !== payload
                     ),
@@ -40,6 +60,7 @@ export const coursesSlice = createSlice({
             if (state && state.courses) {
                 return {
                     errorCode: null,
+                    course: null,
                     courses: state.courses.filter(
                         (course) => !payload.includes(course.id)
                     ),

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react'
+import React, { useCallback, useEffect } from 'react'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -19,6 +19,9 @@ import DeleteButton from '../DeleteButton'
 import TableToolbar from './TableToolbar'
 import TableHeader from './TableHeader'
 import { Typography } from '@material-ui/core'
+import TableAddNewRow from './TableAddNewRow'
+import { toast } from 'react-toastify'
+import { ICells, IRow } from './type'
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
 
@@ -37,6 +40,10 @@ const useStyles = makeStyles((theme: Theme) =>
         row: {
             animation: '1s ease-out 0s FadeIn',
         },
+        cell: {
+            minWidth: 10,
+            maxWidth: 150,
+        },
         visuallyHidden: {
             border: 0,
             clip: 'rect(0 0 0 0)',
@@ -51,16 +58,13 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 )
 
-interface RowType {
-    id: number
-    [key: string]: any
-}
-
 interface TableComponentProps {
     title: string
-    data: RowType[]
-    cells: { [key: string]: { title: string; isNumeric: boolean } }
+    rowData: IRow[]
+    cells: ICells
     defaultSort: string
+    uniqueKey?: string
+    onAddNew?: (data: any) => void
     onViewDetail?: (id: number) => void
     onDelete?: (id: number) => void
     onDeleteBulk?: (ids: number[]) => void
@@ -69,9 +73,11 @@ interface TableComponentProps {
 
 function TableComponent({
     title,
-    data,
+    rowData,
     cells,
     defaultSort,
+    uniqueKey,
+    onAddNew,
     onViewDetail,
     onDelete,
     onDeleteBulk,
@@ -83,9 +89,11 @@ function TableComponent({
     const [order, setOrder] = React.useState<Order>('asc')
     const [orderBy, setOrderBy] = React.useState<string>(defaultSort)
     const [filter, setFilter] = React.useState<string>('')
-    const [filteredData, setFilteredData] = React.useState<RowType[]>(data)
+    const [filteredData, setFilteredData] = React.useState<IRow[]>(rowData)
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
+
+    const [addNewItem, setAddNewItem] = React.useState(false)
 
     const keys = Object.keys(cells)
     const additionalColspan = (onViewDetail ? 1 : 0) + (onDelete ? 1 : 0)
@@ -151,10 +159,10 @@ function TableComponent({
             setFilter(filter_)
             setPage(0)
             if (filter.length === 0) {
-                setFilteredData(data)
+                setFilteredData(rowData)
             } else {
                 setFilteredData(
-                    data.filter((row) => {
+                    rowData.filter((row) => {
                         const splitFilter = filter_.split(':')
                         const keyToCompare =
                             splitFilter.length > 1 ? splitFilter[0] : null
@@ -168,7 +176,8 @@ function TableComponent({
                                     if (key === keyToCompare) {
                                         if (typeof value == 'number') {
                                             return (
-                                                value.toString() === valueToCompare
+                                                value.toString() ===
+                                                valueToCompare
                                             )
                                         } else if (typeof value == 'string') {
                                             return value
@@ -181,7 +190,9 @@ function TableComponent({
                                     return false
                                 } else {
                                     if (typeof value == 'number') {
-                                        return value.toString() === valueToCompare
+                                        return (
+                                            value.toString() === valueToCompare
+                                        )
                                     } else if (typeof value == 'string') {
                                         return value
                                             ?.toLowerCase()
@@ -195,7 +206,9 @@ function TableComponent({
                     })
                 )
             }
-        }, [data, filter])
+        },
+        [rowData, filter]
+    )
 
     const getRowEntries = (row: { [key: string]: any }, keys: string[]) => {
         const entries: [string, any][] = []
@@ -205,13 +218,39 @@ function TableComponent({
         return entries
     }
 
+    const startAddNewItemHandler = () => {
+        setAddNewItem(true)
+    }
+
+    const saveAddNewItemHandler = (data: any) => {
+        if (onAddNew && uniqueKey) {
+            if (
+                rowData.some((row: IRow) => row[uniqueKey] === data[uniqueKey])
+            ) {
+                console.log('test')
+                toast.error(
+                    `There is already an item with field ${cells[uniqueKey].title} set to ${data[uniqueKey]}`
+                )
+                return
+            }
+            toast.dismiss()
+            onAddNew(data)
+            setAddNewItem(false)
+        }
+    }
+
+    const cancelAddNewItemHandler = () => {
+        toast.dismiss()
+        setAddNewItem(false)
+    }
+
     const isSelected = (id: number) => selected.indexOf(id) !== -1
     const isDeleted = (id: number) => deleted.indexOf(id) !== -1
 
     useEffect(() => {
         setSelected([])
         handleChangeFilter(filter)
-    }, [data, filter, handleChangeFilter])
+    }, [rowData, filter, handleChangeFilter])
 
     return (
         <div className={classes.root}>
@@ -221,6 +260,8 @@ function TableComponent({
                     numSelected={selected.length}
                     filter={filter}
                     filterChanged={handleChangeFilter}
+                    canAddNewItem={onAddNew !== undefined}
+                    onAddNew={startAddNewItemHandler}
                     onDeleteBulk={handleDeleteBulk}
                 />
                 <TableContainer style={{ maxHeight: '74vh' }}>
@@ -240,10 +281,17 @@ function TableComponent({
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={data.length}
+                            rowCount={rowData.length}
                             additionalColspan={additionalColspan}
                         />
                         <TableBody>
+                            {addNewItem && onAddNew && (
+                                <TableAddNewRow
+                                    cells={cells}
+                                    onSave={saveAddNewItemHandler}
+                                    onCancel={cancelAddNewItemHandler}
+                                />
+                            )}
                             {filteredData.length === 0 ? (
                                 <TableRow>
                                     <TableCell
@@ -280,10 +328,12 @@ function TableComponent({
                                                     isDeleted(row.id as number)
                                                         ? 'deleted'
                                                         : ''
+                                                } ${
+                                                    addNewItem
+                                                        ? 'rowInactive'
+                                                        : ''
                                                 }`}
                                                 hover
-                                                role="checkbox"
-                                                aria-checked={isItemSelected}
                                                 tabIndex={-1}
                                                 key={row.id}
                                                 selected={isItemSelected}
@@ -329,6 +379,9 @@ function TableComponent({
                                                     ([key, value]) => {
                                                         return (
                                                             <TableCell
+                                                                className={
+                                                                    classes.cell
+                                                                }
                                                                 key={`${key}-${row.id}`}
                                                                 padding="default"
                                                                 align={

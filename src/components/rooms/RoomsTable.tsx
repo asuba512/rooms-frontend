@@ -3,15 +3,20 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import TableComponent from '../TableComponent/TableComponent'
 import { RootState } from '../../redux/type'
-import { mapRoomTypeEnumToString } from '../../redux/rooms/utils'
+import {
+    mapRoomTypeEnumToString,
+    roomTypesAsObject,
+} from '../../redux/rooms/utils'
 import {
     getRooms,
     deleteBulkRooms,
     deleteRoom,
     getRoomById,
+    createRoom,
 } from '../../redux/rooms/roomsThunks'
 import RoomDetail from './RoomDetail'
 import { destroyRoomDetailActionCreator } from '../../redux/store'
+import { IRoom } from '../../redux/rooms/type'
 
 function RoomsTable() {
     const dispatch = useDispatch()
@@ -28,14 +33,22 @@ function RoomsTable() {
         roomsState.rooms?.map((room) => {
             return {
                 ...room,
-                type: mapRoomTypeEnumToString(room.roomType),
+                roomType: mapRoomTypeEnumToString(room.roomType),
             }
         }) || []
     const cells = {
-        name: { title: 'Name', isNumeric: false },
-        type: { title: 'Room Type', isNumeric: false },
+        name: { title: 'Name' },
+        roomType: {
+            title: 'Room Type',
+            allowedValues: roomTypesAsObject,
+        },
         capacity: { title: 'Room Capacity', isNumeric: true },
-        location: { title: 'Location', isNumeric: false },
+        location: { title: 'Location', isOptional: true },
+    }
+
+    const onAddNewHandler = (data: IRoom) => {
+        data.roomType = Number(data.roomType)
+        dispatch(createRoom(data))
     }
 
     const onViewDetailHandler = (id: number) => {
@@ -58,15 +71,18 @@ function RoomsTable() {
         <>
             <TableComponent
                 title="Rooms"
-                data={rooms}
+                rowData={rooms}
                 cells={cells}
                 defaultSort="name"
+                uniqueKey="name"
+                onAddNew={isAdmin ? onAddNewHandler : undefined}
                 onViewDetail={onViewDetailHandler}
                 onDelete={isAdmin ? onDeleteHandler : undefined}
                 onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}
             />
             <RoomDetail
                 room={roomsState.room || undefined}
+                isAdmin={isAdmin}
                 handleClose={onViewDetailCloseHandler}
             />
         </>

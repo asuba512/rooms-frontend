@@ -12,8 +12,8 @@ import { usersSlice } from './users/usersSlice'
 const reducer = {
     auth: authSlice.reducer,
     roomsAPI: roomsSlice.reducer,
-    courses: coursesSlice.reducer,
-    users: usersSlice.reducer,
+    coursesAPI: coursesSlice.reducer,
+    usersAPI: usersSlice.reducer,
     loadingBar: loadingBarReducer,
 }
 

@@ -1,16 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import {
-    RoomInterface,
-    RoomDetailInterface,
-    RoomsState,
-    ScheduleItemInterface,
-} from './type'
+import { IRoom, IRoomDetail, RoomsState, IScheduleItem } from './type'
 import {
     getRooms,
     deleteRoom,
     deleteBulkRooms,
     getRoomById,
-    getRoomSchedule, editRoom,
+    getRoomSchedule,
+    editRoom,
+    createRoom,
 } from './roomsThunks'
 
 const initialState = {
@@ -30,7 +27,7 @@ export const roomsSlice = createSlice({
     extraReducers: {
         [getRooms.fulfilled.type]: (
             state,
-            { payload }: PayloadAction<RoomInterface[]>
+            { payload }: PayloadAction<IRoom[]>
         ) => {
             state.rooms = payload
         },
@@ -42,21 +39,29 @@ export const roomsSlice = createSlice({
         },
         [getRoomById.fulfilled.type]: (
             state,
-            { payload }: PayloadAction<RoomDetailInterface>
+            { payload }: PayloadAction<IRoomDetail>
         ) => {
             state.room = payload
         },
         [getRoomSchedule.fulfilled.type]: (
             state,
-            { payload }: PayloadAction<ScheduleItemInterface[]>
+            { payload }: PayloadAction<IScheduleItem[]>
         ) => {
             if (state.room) {
                 state.room.schedule = payload
             }
         },
+        [createRoom.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IRoom>
+        ) => {
+            if (state.rooms) {
+                state.rooms.push(payload)
+            }
+        },
         [editRoom.fulfilled.type]: (
             state,
-            {payload}: PayloadAction<RoomDetailInterface>
+            { payload }: PayloadAction<IRoomDetail>
         ) => {
             if (state.room && state.room.id === payload.id) {
                 state.room = {
@@ -65,10 +70,12 @@ export const roomsSlice = createSlice({
                 }
             }
             if (state.rooms) {
-                const index = state.rooms.findIndex(room => room.id === payload.id)
+                const index = state.rooms.findIndex(
+                    (room) => room.id === payload.id
+                )
                 state.rooms[index] = {
                     ...state.rooms[index],
-                    ...payload
+                    ...payload,
                 }
             }
         },

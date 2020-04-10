@@ -5,9 +5,9 @@ import { UsersState } from './users/type'
 
 export interface RootState {
     auth: AuthState | null
-    courses: CoursesState | null
+    coursesAPI: CoursesState
     roomsAPI: RoomsState
-    users: UsersState
+    usersAPI: UsersState
 }
 
 export { AuthState, CoursesState, RoomsState, UsersState }

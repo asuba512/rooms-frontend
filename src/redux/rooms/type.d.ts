@@ -1,4 +1,6 @@
-export interface RoomInterface {
+import { ICourse } from '../courses/type'
+
+export interface IRoom {
     id: number
     name: string
     location: string | null
@@ -6,7 +8,7 @@ export interface RoomInterface {
     roomType: number
 }
 
-interface EquipmentInterface {
+interface IEquipment {
     id: number
     type: string
     brand: string
@@ -14,29 +16,21 @@ interface EquipmentInterface {
     quantity: number
 }
 
-interface SubjectInterface {
-    id: number
-    name: string
-    abbreviation: string
-    credits: number
-    teachers: any
-}
-
-interface ScheduleItemInterface {
+interface IScheduleItem {
     type: number
     name: string
     start: Date
     end: Date
-    subject: SubjectInterface | null
+    subject: ICourse | null
 }
 
-export interface RoomDetailInterface extends RoomInterface {
-    equipment?: EquipmentInterface[]
-    schedule?: ScheduleItemInterface[]
+export interface IRoomDetail extends IRoom {
+    equipment?: IEquipment[]
+    schedule?: IScheduleItem[]
 }
 
 export interface RoomsState {
-    rooms: RoomInterface[] | null
-    room: RoomDetailInterface | null
+    rooms: IRoom[] | null
+    room: IRoomDetail | null
     errorCode: number | null
 }

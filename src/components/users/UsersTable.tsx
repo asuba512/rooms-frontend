@@ -1,38 +1,37 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import TableComponent from './TableComponent/TableComponent'
-import { RootState } from '../redux/type'
-import { getUsers } from '../redux/users/usersThunks'
-import { deleteBulkUsers, deleteUser } from '../redux/users/usersThunks'
+import TableComponent from '../TableComponent/TableComponent'
+import { RootState } from '../../redux/type'
+import { createUser, getUsers } from '../../redux/users/usersThunks'
+import { deleteBulkUsers, deleteUser } from '../../redux/users/usersThunks'
 import { toast } from 'react-toastify'
+import { IUser } from '../../redux/users/type'
 
-function UsersComponent() {
+function UsersTable() {
     const dispatch = useDispatch()
-    const usersState = useSelector((state: RootState) => state.users)
+    const usersState = useSelector((state: RootState) => state.usersAPI)
     const [isAdmin, currentUserId] = useSelector((state: RootState) => [
         state.auth?.role === 'admin',
         state.auth?.id,
     ])
 
-    const users =
-        usersState?.users?.map((user) => {
-            return {
-                ...user,
-                name:
-                    [user.titleBefore, user.firstName, user.lastName].join(
-                        ' '
-                    ) + (user.titleAfter ? `, ${user.titleAfter}` : ''),
-            }
-        }) || []
+    const users = usersState?.users || []
     const cells = {
-        name: { title: 'Name', isNumeric: false },
-        username: { title: 'Login', isNumeric: false },
-        email: { title: 'E-Mail', isNumeric: false },
+        username: { title: 'Login' },
+        titleBefore: { title: 'Title(s) before', isOptional: true },
+        firstName: { title: 'First Name' },
+        lastName: { title: 'Last Name' },
+        titleAfter: { title: 'Title(s) after', isOptional: true },
+        email: { title: 'E-Mail' },
     }
 
     const onViewDetailHandler = (id: number) => {
         console.log(id)
+    }
+
+    const onAddNewHandler = (data: IUser) => {
+        dispatch(createUser(data))
     }
 
     const onDeleteHandler = (id: number) => {
@@ -60,10 +59,12 @@ function UsersComponent() {
     return (
         <TableComponent
             title="Users"
-            data={users}
+            rowData={users}
             cells={cells}
-            defaultSort="name"
+            defaultSort="lastName"
+            uniqueKey="username"
             onViewDetail={onViewDetailHandler}
+            onAddNew={isAdmin ? onAddNewHandler : undefined}
             onDelete={isAdmin ? onDeleteHandler : undefined}
             onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}
             canBeDeleted={canBeDeleted}
@@ -71,4 +72,4 @@ function UsersComponent() {
     )
 }
 
-export default UsersComponent
+export default UsersTable
