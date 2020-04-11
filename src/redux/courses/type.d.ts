@@ -1,14 +1,12 @@
-import { IUser } from '../users/type'
-
 export interface ICourse {
     id: number
     abbreviation: string
     name: string
-    credits: string
+    credits: number
 }
 
 interface ICourseDetail extends ICourse {
-    teachers: IUser[]
+    teachers: { id: number }[]
 }
 
 export interface CoursesState {

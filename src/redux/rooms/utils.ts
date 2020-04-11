@@ -14,8 +14,8 @@ export const mapRoomTypeEnumToString = (roomType: number | undefined) => {
 }
 
 export const roomTypesAsObject = {
-    0: 'Lecture Room',
-    1: 'Laboratory',
-    2: 'Seminar Room',
-    3: 'Meeting Room',
+    '0': 'Lecture Room',
+    '1': 'Laboratory',
+    '2': 'Seminar Room',
+    '3': 'Meeting Room',
 }

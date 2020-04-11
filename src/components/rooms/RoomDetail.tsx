@@ -35,11 +35,11 @@ import { TransitionProps } from '@material-ui/core/transitions'
 
 import { IRoomDetail } from '../../redux/rooms/type'
 import { mapRoomTypeEnumToString } from '../../redux/rooms/utils'
-import TableComponent from '../TableComponent/TableComponent'
 
 import './react-big-calendar.css'
 import Schedule from './Schedule'
 import { editRoom } from '../../redux/rooms/roomsThunks'
+import EquipmentTable from './EquipmentTable'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -103,13 +103,13 @@ const ZoomTransition = React.forwardRef(function Transition(
     return <Zoom ref={ref} {...props} />
 })
 
-interface FullScreenDialogProps {
+interface RoomDetailProps {
     room?: IRoomDetail
     isAdmin: boolean
     handleClose: () => void
 }
 
-function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
+function RoomDetail({ room, isAdmin, handleClose }: RoomDetailProps) {
     const classes = useStyles()
     const useFullScreen = useMediaQuery(useTheme().breakpoints.down('md'))
 
@@ -125,7 +125,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
 
     const dispatch = useDispatch()
 
-    const settAllValid = () => {
+    const setAllValid = () => {
         setNameInvalid(false)
         setCapacityInvalid(false)
         setLocationInvalid(false)
@@ -144,7 +144,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
             return
         }
         if (!name || !capacity || !location || roomType === undefined) {
-            settAllValid()
+            setAllValid()
             if (!name) {
                 setNameInvalid(true)
             }
@@ -159,7 +159,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
             }
             return
         }
-        settAllValid()
+        setAllValid()
 
         dispatch(editRoom({ id: room?.id, name, capacity, location, roomType }))
 
@@ -169,7 +169,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
 
     const handleCancel = useCallback(() => {
         setToOriginalValue()
-        settAllValid()
+        setAllValid()
         setIsEdit(false)
     }, [setToOriginalValue])
 
@@ -215,6 +215,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
                                     <Toolbar disableGutters variant="dense">
                                         {isEdit ? (
                                             <TextField
+                                                fullWidth
                                                 error={nameInvalid}
                                                 label="Name"
                                                 size="medium"
@@ -270,6 +271,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
                                             </ListItemAvatar>
                                             {isEdit ? (
                                                 <TextField
+                                                    fullWidth
                                                     error={capacityInvalid}
                                                     label="Capacity"
                                                     type="number"
@@ -299,6 +301,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
                                             </ListItemAvatar>
                                             {isEdit ? (
                                                 <TextField
+                                                    fullWidth
                                                     error={locationInvalid}
                                                     label="Location"
                                                     size="medium"
@@ -325,6 +328,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
                                             </ListItemAvatar>
                                             {isEdit ? (
                                                 <TextField
+                                                    fullWidth
                                                     error={roomTypeInvalid}
                                                     select
                                                     label="Type"
@@ -373,20 +377,7 @@ function RoomDetail({ room, isAdmin, handleClose }: FullScreenDialogProps) {
                             </div>
                         </Grid>
                         <Grid item className={classes.gridColumn}>
-                            <TableComponent
-                                title="Equipment"
-                                rowData={room?.equipment || []}
-                                cells={{
-                                    type: { title: 'Type' },
-                                    brand: { title: 'Brand' },
-                                    model: { title: 'Model' },
-                                    quantity: {
-                                        title: 'Quantity',
-                                        isNumeric: true,
-                                    },
-                                }}
-                                defaultSort="type"
-                            />
+                            <EquipmentTable room={room} isAdmin={isAdmin} />
                         </Grid>
                         <Grid item className={classes.gridColumnFill}>
                             <Paper className={classes.paper}>

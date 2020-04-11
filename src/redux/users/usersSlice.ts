@@ -4,12 +4,12 @@ import {
     createUser,
     deleteBulkUsers,
     deleteUser,
+    editUser,
     getUsers,
 } from './usersThunks'
 
 const initialState = {
     users: null,
-    user: null,
     errorCode: null,
 }
 
@@ -36,6 +36,20 @@ export const usersSlice = createSlice({
         ) => {
             if (state.users) {
                 state.users.push(payload)
+            }
+        },
+        [editUser.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IUser>
+        ) => {
+            if (state && state.users) {
+                const index = state.users.findIndex(
+                    (user) => user.id === payload.id
+                )
+                state.users[index] = {
+                    ...state.users[index],
+                    ...payload,
+                }
             }
         },
         [deleteUser.fulfilled.type]: (

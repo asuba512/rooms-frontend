@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ICourse, CoursesState } from './type'
+import { ICourse, CoursesState, ICourseDetail } from './type'
 import {
     createCourse,
     deleteBulkCourses,
     deleteCourse,
+    editCourse,
+    editTeachers,
+    getCourseById,
     getCourses,
 } from './coursesThunks'
 
@@ -16,7 +19,11 @@ const initialState = {
 export const coursesSlice = createSlice({
     name: 'courses',
     initialState: initialState as CoursesState,
-    reducers: {},
+    reducers: {
+        destroyCourseDetail: (state, action: PayloadAction) => {
+            state.course = null
+        },
+    },
     extraReducers: {
         [getCourses.fulfilled.type]: (
             state,
@@ -30,12 +37,38 @@ export const coursesSlice = createSlice({
         ) => {
             state.errorCode = payload
         },
+        [getCourseById.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<ICourseDetail>
+        ) => {
+            state.course = payload
+        },
         [createCourse.fulfilled.type]: (
             state,
             { payload }: PayloadAction<ICourse>
         ) => {
             if (state.courses) {
                 state.courses.push(payload)
+            }
+        },
+        [editCourse.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<ICourse>
+        ) => {
+            if (state.course && state.course.id === payload.id) {
+                state.course = {
+                    ...state.course,
+                    ...payload,
+                }
+            }
+            if (state.courses) {
+                const index = state.courses.findIndex(
+                    (course) => course.id === payload.id
+                )
+                state.courses[index] = {
+                    ...state.courses[index],
+                    ...payload,
+                }
             }
         },
         [deleteCourse.fulfilled.type]: (
@@ -67,6 +100,16 @@ export const coursesSlice = createSlice({
                 }
             }
             return state
+        },
+        [editTeachers.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<number[]>
+        ) => {
+            if (state && state.course) {
+                state.course.teachers = payload.map((id) => ({
+                    id,
+                }))
+            }
         },
     },
 })

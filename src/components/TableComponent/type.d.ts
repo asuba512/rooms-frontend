@@ -3,11 +3,14 @@ export interface IRow {
     [key: string]: any
 }
 
+export interface ICell {
+    title: string
+    isNumeric?: boolean
+    isBoolean?: boolean
+    isOptional?: boolean
+    allowedValues?: { [enumValue: string]: string }
+}
+
 export interface ICells {
-    [key: string]: {
-        title: string
-        isNumeric?: boolean
-        isOptional?: boolean
-        allowedValues?: { [key: number]: string }
-    }
+    [key: string]: ICell
 }

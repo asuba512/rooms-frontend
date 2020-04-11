@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import TableComponent from '../TableComponent/TableComponent'
 import { RootState } from '../../redux/type'
-import { createUser, getUsers } from '../../redux/users/usersThunks'
+import { createUser, editUser, getUsers } from '../../redux/users/usersThunks'
 import { deleteBulkUsers, deleteUser } from '../../redux/users/usersThunks'
 import { toast } from 'react-toastify'
 import { IUser } from '../../redux/users/type'
@@ -24,14 +24,15 @@ function UsersTable() {
         lastName: { title: 'Last Name' },
         titleAfter: { title: 'Title(s) after', isOptional: true },
         email: { title: 'E-Mail' },
-    }
-
-    const onViewDetailHandler = (id: number) => {
-        console.log(id)
+        isAdmin: { title: 'Admin', isBoolean: true },
     }
 
     const onAddNewHandler = (data: IUser) => {
         dispatch(createUser(data))
+    }
+
+    const onEditHandler = (data: IUser) => {
+        dispatch(editUser(data))
     }
 
     const onDeleteHandler = (id: number) => {
@@ -62,9 +63,9 @@ function UsersTable() {
             rowData={users}
             cells={cells}
             defaultSort="lastName"
-            uniqueKey="username"
-            onViewDetail={onViewDetailHandler}
+            uniqueKeys={['username', 'email']}
             onAddNew={isAdmin ? onAddNewHandler : undefined}
+            onEdit={isAdmin ? onEditHandler : undefined}
             onDelete={isAdmin ? onDeleteHandler : undefined}
             onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}
             canBeDeleted={canBeDeleted}

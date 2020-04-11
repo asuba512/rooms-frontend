@@ -8,20 +8,29 @@ import Check from '@material-ui/icons/Check'
 import Tooltip from '@material-ui/core/Tooltip'
 import MenuItem from '@material-ui/core/MenuItem'
 import Typography from '@material-ui/core/Typography/Typography'
-import { ICells } from './type'
+import { ICells, IRow } from './type'
+import { Checkbox } from '@material-ui/core'
 
 interface TableAddNewRowProps {
     cells: ICells
+    data?: IRow
+    skipCheckbox?: boolean
     onSave: (data: any) => void
     onCancel: () => void
 }
 
-function TableAddNewRow({ cells, onSave, onCancel }: TableAddNewRowProps) {
+function TableEditableRow({
+    cells,
+    data,
+    skipCheckbox,
+    onSave,
+    onCancel,
+}: TableAddNewRowProps) {
     const [inputStates, setInputStates] = useState(
         Object.assign(
             {},
             ...Object.keys(cells).map((key) => ({
-                [key]: '' as number | string,
+                [key]: data ? data[key] : ('' as number | string | boolean),
             }))
         )
     )
@@ -34,7 +43,10 @@ function TableAddNewRow({ cells, onSave, onCancel }: TableAddNewRowProps) {
         )
     )
 
-    const handleInputChange = (key: string, value: string | number) => {
+    const handleInputChange = (
+        key: string,
+        value: string | number | boolean
+    ) => {
         if (cells[key].isNumeric) {
             setInputStates({ ...inputStates, [key]: Number(value) })
         } else {
@@ -60,7 +72,7 @@ function TableAddNewRow({ cells, onSave, onCancel }: TableAddNewRowProps) {
 
     return (
         <TableRow>
-            <TableCell />
+            {!skipCheckbox && <TableCell />}
             {Object.entries(cells).map(([key, value]) => {
                 return (
                     <TableCell key={key}>
@@ -98,6 +110,13 @@ function TableAddNewRow({ cells, onSave, onCancel }: TableAddNewRowProps) {
                                     }
                                 )}
                             </TextField>
+                        ) : value.isBoolean ? (
+                            <Checkbox
+                                checked={inputStates[key]}
+                                onChange={(e) =>
+                                    handleInputChange(key, e.target.checked)
+                                }
+                            />
                         ) : (
                             <TextField
                                 error={inputStatesInvalidity[key]}
@@ -133,4 +152,4 @@ function TableAddNewRow({ cells, onSave, onCancel }: TableAddNewRowProps) {
     )
 }
 
-export default TableAddNewRow
+export default TableEditableRow

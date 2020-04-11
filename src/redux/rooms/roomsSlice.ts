@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { IRoom, IRoomDetail, RoomsState, IScheduleItem } from './type'
+import {
+    IRoom,
+    IRoomDetail,
+    RoomsState,
+    IScheduleItem,
+    IEquipment,
+} from './type'
 import {
     getRooms,
     deleteRoom,
@@ -8,6 +14,9 @@ import {
     getRoomSchedule,
     editRoom,
     createRoom,
+    deleteEquipment,
+    createEquipment,
+    editEquipment,
 } from './roomsThunks'
 
 const initialState = {
@@ -106,6 +115,44 @@ export const roomsSlice = createSlice({
                 }
             }
             return state
+        },
+        [createEquipment.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IEquipment>
+        ) => {
+            if (state.room) {
+                if (state.room.equipment) {
+                    state.room.equipment.push(payload)
+                } else {
+                    state.room.equipment = [payload]
+                }
+            }
+        },
+        [editEquipment.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IEquipment>
+        ) => {
+            if (state.room && state.room) {
+                if (state.room.equipment) {
+                    const index = state.room.equipment.findIndex(
+                        (equipment) => equipment.id === payload.id
+                    )
+                    state.room.equipment[index] = payload
+                } else {
+                    state.room.equipment = [payload]
+                }
+            }
+        },
+        [deleteEquipment.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<number>
+        ) => {
+            if (state.room && state.room.equipment) {
+                const index = state.room.equipment.findIndex(
+                    (equipment) => equipment.id === payload
+                )
+                state.room.equipment.splice(index, 1)
+            }
         },
     },
 })

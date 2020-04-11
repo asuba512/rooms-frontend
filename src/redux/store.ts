@@ -26,6 +26,9 @@ export const {
 export const {
     destroyRoomDetail: destroyRoomDetailActionCreator,
 } = roomsSlice.actions
+export const {
+    destroyCourseDetail: destroyCourseDetailActionCreator,
+} = coursesSlice.actions
 export default configureStore({
     reducer,
     middleware,

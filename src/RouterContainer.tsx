@@ -1,21 +1,21 @@
 import React from 'react'
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect,
 } from 'react-router-dom'
-import useStyles from './utils/useStyles'
+import mainLayoutStyles from './utils/mainLayoutStyles'
 
 function RouterContainer() {
-  const classes = useStyles()
-  return (
-    <>
-      <Router>
-        <Switch></Switch>
-      </Router>
-    </>
-  )
+    const classes = mainLayoutStyles()
+    return (
+        <>
+            <Router>
+                <Switch></Switch>
+            </Router>
+        </>
+    )
 }
 
 export default RouterContainer

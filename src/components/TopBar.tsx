@@ -11,7 +11,7 @@ import ExitToApp from '@material-ui/icons/ExitToApp'
 import Menu from '@material-ui/icons/Menu'
 import { logoutUserActionCreator } from '../redux/store'
 import { useDispatch, useSelector } from 'react-redux'
-import useStyles from '../utils/useStyles'
+import mainLayoutStyles from '../utils/mainLayoutStyles'
 import { RootState } from '../redux/type'
 import { removeUserToken } from '../utils/getUserTokenData'
 
@@ -21,7 +21,7 @@ interface TopBarProps {
 }
 
 function TopBar({ menuOpen, setMenuOpen }: TopBarProps) {
-    const classes = useStyles()
+    const classes = mainLayoutStyles()
     const authState = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch()
 

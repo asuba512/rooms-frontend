@@ -9,7 +9,7 @@ import {
 
 import TopBar from './components/TopBar'
 import LoginComponent from './components/LoginComponent'
-import useStyles from './utils/useStyles'
+import mainLayoutStyles from './utils/mainLayoutStyles'
 import { CssBaseline } from '@material-ui/core'
 import SideMenu from './components/SideMenu'
 import RoomsTable from './components/rooms/RoomsTable'
@@ -20,7 +20,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 import useTheme from '@material-ui/core/styles/useTheme'
 
 function App() {
-    const classes = useStyles()
+    const classes = mainLayoutStyles()
     const isAuthorized = useSelector((state: RootState) => state.auth?.id)
     const [menuOpen, setMenuOpen] = useState(true)
     const isSmall = useMediaQuery(useTheme().breakpoints.down('sm'))

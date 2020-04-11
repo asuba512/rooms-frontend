@@ -32,11 +32,27 @@ export const createUser = createAsyncThunk(
                 }
             })
             .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
                 return thunkAPI.rejectWithValue(false)
             })
     }
 )
 
+export const editUser = createAsyncThunk(
+    'users/editUser',
+    (arg: IUser, thunkAPI) => {
+        const { id, ...data } = arg
+        return axios
+            .put(`https://wap-rooms.herokuapp.com/api/user/${id}`, data)
+            .then((response) => {
+                return arg
+            })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunkAPI.rejectWithValue(false)
+            })
+    }
+)
 export const deleteUser = createAsyncThunk(
     'users/delete',
     (id: number, thunkAPI) => {

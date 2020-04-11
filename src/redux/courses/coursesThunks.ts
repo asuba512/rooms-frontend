@@ -20,6 +20,21 @@ export const getCourses = createAsyncThunk(
     }
 )
 
+export const getCourseById = createAsyncThunk(
+    'courses/getById',
+    (arg: number, thunkAPI) => {
+        return axios
+            .get(`https://wap-rooms.herokuapp.com/api/subject/${arg}`)
+            .then((response) => {
+                return response.data
+            })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunkAPI.rejectWithValue(false)
+            })
+    }
+)
+
 export const createCourse = createAsyncThunk(
     'courses/createCourse',
     (arg: ICourse, thunkAPI) => {
@@ -28,6 +43,22 @@ export const createCourse = createAsyncThunk(
             .then((response) => {
                 const id = response.data
                 return { ...arg, id }
+            })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunkAPI.rejectWithValue(false)
+            })
+    }
+)
+
+export const editCourse = createAsyncThunk(
+    'courses/editCourse',
+    (arg: ICourse, thunkAPI) => {
+        const { id, ...data } = arg
+        return axios
+            .put(`https://wap-rooms.herokuapp.com/api/subject/${id}`, data)
+            .then((response) => {
+                return arg
             })
             .catch((error) => {
                 toast.error(UNEXPECTED_ERROR)
@@ -68,6 +99,24 @@ export const deleteBulkCourses = createAsyncThunk(
             .catch((error) => {
                 toast.error(UNEXPECTED_ERROR)
                 return thunkAPI.rejectWithValue(ids)
+            })
+    }
+)
+
+export const editTeachers = createAsyncThunk(
+    'courses/teachers',
+    ({ courseId, ids }: { courseId: number; ids: number[] }, thunkAPI) => {
+        return axios
+            .put(
+                `https://wap-rooms.herokuapp.com/api/subject/${courseId}/teachers`,
+                ids
+            )
+            .then((response) => {
+                return ids
+            })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunkAPI.rejectWithValue(false)
             })
     }
 )

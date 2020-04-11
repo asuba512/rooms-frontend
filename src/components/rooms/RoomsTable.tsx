@@ -3,16 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import TableComponent from '../TableComponent/TableComponent'
 import { RootState } from '../../redux/type'
-import {
-    mapRoomTypeEnumToString,
-    roomTypesAsObject,
-} from '../../redux/rooms/utils'
+import { roomTypesAsObject } from '../../redux/rooms/utils'
 import {
     getRooms,
     deleteBulkRooms,
     deleteRoom,
     getRoomById,
     createRoom,
+    editRoom,
 } from '../../redux/rooms/roomsThunks'
 import RoomDetail from './RoomDetail'
 import { destroyRoomDetailActionCreator } from '../../redux/store'
@@ -29,13 +27,7 @@ function RoomsTable() {
         dispatch(getRooms())
     }, [dispatch])
 
-    const rooms =
-        roomsState.rooms?.map((room) => {
-            return {
-                ...room,
-                roomType: mapRoomTypeEnumToString(room.roomType),
-            }
-        }) || []
+    const rooms = roomsState.rooms || []
     const cells = {
         name: { title: 'Name' },
         roomType: {
@@ -47,8 +39,11 @@ function RoomsTable() {
     }
 
     const onAddNewHandler = (data: IRoom) => {
-        data.roomType = Number(data.roomType)
         dispatch(createRoom(data))
+    }
+
+    const onEditHandler = (data: IRoom) => {
+        dispatch(editRoom(data))
     }
 
     const onViewDetailHandler = (id: number) => {
@@ -74,8 +69,9 @@ function RoomsTable() {
                 rowData={rooms}
                 cells={cells}
                 defaultSort="name"
-                uniqueKey="name"
+                uniqueKeys={['name']}
                 onAddNew={isAdmin ? onAddNewHandler : undefined}
+                onEdit={isAdmin ? onEditHandler : undefined}
                 onViewDetail={onViewDetailHandler}
                 onDelete={isAdmin ? onDeleteHandler : undefined}
                 onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}

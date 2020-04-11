@@ -11,12 +11,7 @@ export interface IUser {
     password: string | null
 }
 
-export interface IUserDetail extends IUser {
-    subjects: ICourse[]
-}
-
 export interface UsersState {
     users: IUser[] | null
-    user: IUserDetail | null
     errorCode: number | null
 }

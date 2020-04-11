@@ -7,8 +7,12 @@ import {
     deleteBulkCourses,
     deleteCourse,
     createCourse,
+    getCourseById,
+    editCourse,
 } from '../../redux/courses/coursesThunks'
 import { ICourse } from '../../redux/courses/type'
+import CourseDetail from './CourseDetail'
+import { destroyCourseDetailActionCreator } from '../../redux/store'
 
 function CoursesTable() {
     const dispatch = useDispatch()
@@ -28,11 +32,19 @@ function CoursesTable() {
     }, [dispatch])
 
     const onViewDetailHandler = (id: number) => {
-        console.log(id)
+        dispatch(getCourseById(id))
+    }
+
+    const onViewDetailCloseHandler = () => {
+        dispatch(destroyCourseDetailActionCreator())
     }
 
     const onAddNewHandler = (data: ICourse) => {
         dispatch(createCourse(data))
+    }
+
+    const onEditHandler = (data: ICourse) => {
+        dispatch(editCourse(data))
     }
 
     const onDeleteHandler = (id: number) => {
@@ -44,17 +56,25 @@ function CoursesTable() {
     }
 
     return (
-        <TableComponent
-            title="Courses"
-            rowData={courses}
-            cells={cells}
-            defaultSort="abbreviation"
-            uniqueKey="abbreviation"
-            onViewDetail={onViewDetailHandler}
-            onAddNew={isAdmin ? onAddNewHandler : undefined}
-            onDelete={isAdmin ? onDeleteHandler : undefined}
-            onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}
-        />
+        <>
+            <TableComponent
+                title="Courses"
+                rowData={courses}
+                cells={cells}
+                defaultSort="abbreviation"
+                uniqueKeys={['abbreviation']}
+                onViewDetail={onViewDetailHandler}
+                onAddNew={isAdmin ? onAddNewHandler : undefined}
+                onEdit={isAdmin ? onEditHandler : undefined}
+                onDelete={isAdmin ? onDeleteHandler : undefined}
+                onDeleteBulk={isAdmin ? onDeleteBulkHandler : undefined}
+            />
+            <CourseDetail
+                course={coursesState.course || undefined}
+                isAdmin={isAdmin}
+                handleClose={onViewDetailCloseHandler}
+            />
+        </>
     )
 }
 

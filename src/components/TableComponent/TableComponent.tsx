@@ -12,16 +12,16 @@ import Checkbox from '@material-ui/core/Checkbox'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Pageview from '@material-ui/icons/Pageview'
+import EditIcon from '@material-ui/icons/Edit'
 
 import { getComparator, Order, stableSort } from '../../utils/sorting'
-import { titleToIdentifier } from '../../utils/titleToIdentifier'
 import DeleteButton from '../DeleteButton'
 import TableToolbar from './TableToolbar'
 import TableHeader from './TableHeader'
 import { Typography } from '@material-ui/core'
-import TableAddNewRow from './TableAddNewRow'
+import TableEditableRow from './TableEditableRow'
 import { toast } from 'react-toastify'
-import { ICells, IRow } from './type'
+import { ICell, ICells, IRow } from './type'
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
 
@@ -63,8 +63,9 @@ interface TableComponentProps {
     rowData: IRow[]
     cells: ICells
     defaultSort: string
-    uniqueKey?: string
+    uniqueKeys?: string[]
     onAddNew?: (data: any) => void
+    onEdit?: (data: any) => void
     onViewDetail?: (id: number) => void
     onDelete?: (id: number) => void
     onDeleteBulk?: (ids: number[]) => void
@@ -76,8 +77,9 @@ function TableComponent({
     rowData,
     cells,
     defaultSort,
-    uniqueKey,
+    uniqueKeys,
     onAddNew,
+    onEdit,
     onViewDetail,
     onDelete,
     onDeleteBulk,
@@ -94,9 +96,10 @@ function TableComponent({
     const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
     const [addNewItem, setAddNewItem] = React.useState(false)
+    const [editingItem, setEditingItem] = React.useState(-1)
 
-    const keys = Object.keys(cells)
-    const additionalColspan = (onViewDetail ? 1 : 0) + (onDelete ? 1 : 0)
+    const additionalColspan =
+        (onViewDetail ? 1 : 0) + (onDelete ? 1 : 0) + (onEdit ? 1 : 0)
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -210,11 +213,11 @@ function TableComponent({
         [rowData, filter]
     )
 
-    const getRowEntries = (row: { [key: string]: any }, keys: string[]) => {
-        const entries: [string, any][] = []
-        for (let key of keys) {
-            entries.push([key, row[key]])
-        }
+    const getRowEntries = (row: { [key: string]: any }, cells: ICells) => {
+        const entries: [string, number | string | boolean, ICell][] = []
+        Object.entries(cells).forEach(([key, value]) => {
+            entries.push([key, row[key], value])
+        })
         return entries
     }
 
@@ -223,13 +226,18 @@ function TableComponent({
     }
 
     const saveAddNewItemHandler = (data: any) => {
-        if (onAddNew && uniqueKey) {
+        if (onAddNew && uniqueKeys) {
             if (
-                rowData.some((row: IRow) => row[uniqueKey] === data[uniqueKey])
+                rowData.some((row: IRow) =>
+                    uniqueKeys.some(
+                        (uniqueKey) => row[uniqueKey] === data[uniqueKey]
+                    )
+                )
             ) {
-                console.log('test')
                 toast.error(
-                    `There is already an item with field ${cells[uniqueKey].title} set to ${data[uniqueKey]}`
+                    `There is already an item with the same values of some of these unique fields: ${uniqueKeys
+                        .map((key) => cells[key].title)
+                        .join(', ')}`
                 )
                 return
             }
@@ -242,6 +250,38 @@ function TableComponent({
     const cancelAddNewItemHandler = () => {
         toast.dismiss()
         setAddNewItem(false)
+    }
+
+    const startEditItemHandler = (id: number) => {
+        setEditingItem(id)
+    }
+
+    const saveEditItemHandler = (data: any) => {
+        if (onEdit && uniqueKeys) {
+            if (
+                rowData.some(
+                    (row: IRow) =>
+                        uniqueKeys.some(
+                            (uniqueKey) => row[uniqueKey] === data[uniqueKey]
+                        ) && row.id !== editingItem
+                )
+            ) {
+                toast.error(
+                    `There is already an item with the same values of some of these unique fields: ${uniqueKeys
+                        .map((key) => cells[key].title)
+                        .join(', ')}`
+                )
+                return
+            }
+            toast.dismiss()
+            onEdit({ ...data, id: editingItem })
+            setEditingItem(-1)
+        }
+    }
+
+    const cancelEditItemHandler = () => {
+        toast.dismiss()
+        setEditingItem(-1)
     }
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1
@@ -267,7 +307,6 @@ function TableComponent({
                 <TableContainer style={{ maxHeight: '74vh' }}>
                     <Table
                         className={classes.table}
-                        aria-labelledby={titleToIdentifier(title)}
                         size="medium"
                         aria-label={title}
                         stickyHeader
@@ -286,8 +325,9 @@ function TableComponent({
                         />
                         <TableBody>
                             {addNewItem && onAddNew && (
-                                <TableAddNewRow
+                                <TableEditableRow
                                     cells={cells}
+                                    skipCheckbox={onDeleteBulk === undefined}
                                     onSave={saveAddNewItemHandler}
                                     onCancel={cancelAddNewItemHandler}
                                 />
@@ -297,7 +337,8 @@ function TableComponent({
                                     <TableCell
                                         align="center"
                                         colSpan={
-                                            keys.length + additionalColspan
+                                            Object.keys(cells).length +
+                                            additionalColspan
                                         }
                                     >
                                         <Typography color="textSecondary">
@@ -306,30 +347,43 @@ function TableComponent({
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                stableSort(
+                                (stableSort(
                                     filteredData,
                                     getComparator(order, orderBy)
-                                )
+                                ) as IRow[])
                                     .slice(
                                         page * rowsPerPage,
                                         page * rowsPerPage + rowsPerPage
                                     )
-                                    .map((row, index) => {
+                                    .map((row: IRow, index) => {
                                         const isItemSelected = isSelected(
                                             row.id as number
                                         )
                                         const labelId = `table-checkbox-${index}`
                                         const isDeleteDisabled =
                                             canBeDeleted &&
-                                            !canBeDeleted(row.id as number)
-                                        return (
+                                            !canBeDeleted(row.id)
+                                        return onEdit &&
+                                            editingItem === row.id ? (
+                                            <TableEditableRow
+                                                key={row.id}
+                                                cells={cells}
+                                                skipCheckbox={
+                                                    onDeleteBulk === undefined
+                                                }
+                                                data={row}
+                                                onCancel={cancelEditItemHandler}
+                                                onSave={saveEditItemHandler}
+                                            />
+                                        ) : (
                                             <TableRow
                                                 className={`${
-                                                    isDeleted(row.id as number)
+                                                    isDeleted(row.id)
                                                         ? 'deleted'
                                                         : ''
                                                 } ${
-                                                    addNewItem
+                                                    addNewItem ||
+                                                    editingItem > 0
                                                         ? 'rowInactive'
                                                         : ''
                                                 }`}
@@ -345,7 +399,7 @@ function TableComponent({
                                                                 arrow
                                                                 title={
                                                                     isDeleteDisabled
-                                                                        ? 'You cannot select your user account for deletion. If you really want to do this, use another admin account.'
+                                                                        ? 'Selecting this item for deletion is not allowed'
                                                                         : 'Select'
                                                                 }
                                                             >
@@ -356,7 +410,7 @@ function TableComponent({
                                                                         ) =>
                                                                             handleClick(
                                                                                 event,
-                                                                                row.id as number
+                                                                                row.id
                                                                             )
                                                                         }
                                                                         checked={
@@ -375,25 +429,41 @@ function TableComponent({
                                                     </TableCell>
                                                 )}
 
-                                                {getRowEntries(row, keys).map(
-                                                    ([key, value]) => {
+                                                {getRowEntries(row, cells).map(
+                                                    ([key, value, cell]) => {
                                                         return (
                                                             <TableCell
                                                                 className={
                                                                     classes.cell
                                                                 }
                                                                 key={`${key}-${row.id}`}
-                                                                padding="default"
+                                                                padding={
+                                                                    cell.isBoolean
+                                                                        ? 'checkbox'
+                                                                        : 'default'
+                                                                }
                                                                 align={
-                                                                    typeof value ==
-                                                                    'number'
+                                                                    cell.isNumeric
                                                                         ? 'right'
                                                                         : 'left'
                                                                 }
                                                             >
-                                                                {' '}
                                                                 <div>
-                                                                    {value}
+                                                                    {(cell?.allowedValues ||
+                                                                        {})[
+                                                                        value as
+                                                                            | string
+                                                                            | number
+                                                                    ] ||
+                                                                        (cell?.isBoolean && (
+                                                                            <Checkbox
+                                                                                checked={
+                                                                                    value as boolean
+                                                                                }
+                                                                                disabled
+                                                                            />
+                                                                        )) ||
+                                                                        value}
                                                                 </div>
                                                             </TableCell>
                                                         )
@@ -409,12 +479,34 @@ function TableComponent({
                                                                 <IconButton
                                                                     onClick={() =>
                                                                         onViewDetail(
-                                                                            row.id as number
+                                                                            row.id
                                                                         )
                                                                     }
                                                                 >
                                                                     <Pageview />
                                                                 </IconButton>
+                                                            </Tooltip>
+                                                        </div>
+                                                    </TableCell>
+                                                )}
+                                                {onEdit && (
+                                                    <TableCell padding="checkbox">
+                                                        <div>
+                                                            <Tooltip
+                                                                arrow
+                                                                title="Edit item"
+                                                            >
+                                                                <div>
+                                                                    <IconButton
+                                                                        onClick={() =>
+                                                                            startEditItemHandler(
+                                                                                row.id
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <EditIcon />
+                                                                    </IconButton>
+                                                                </div>
                                                             </Tooltip>
                                                         </div>
                                                     </TableCell>
@@ -426,7 +518,7 @@ function TableComponent({
                                                                 arrow
                                                                 title={
                                                                     isDeleteDisabled
-                                                                        ? 'You cannot delete your user account. If you really want to do this, use another admin account.'
+                                                                        ? 'Deleting this item is not allowed'
                                                                         : 'Delete'
                                                                 }
                                                             >
@@ -434,7 +526,7 @@ function TableComponent({
                                                                     <DeleteButton
                                                                         onClick={() => {
                                                                             handleDelete(
-                                                                                row.id as number
+                                                                                row.id
                                                                             )
                                                                         }}
                                                                         disabled={

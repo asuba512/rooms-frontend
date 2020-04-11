@@ -44,13 +44,16 @@ function TableHeader({
         onRequestSort(event, property)
     }
 
-    const headers = Object.entries(cells).map(([id, { title, isNumeric }]) => {
-        return {
-            id,
-            isNumeric,
-            label: title,
+    const headers = Object.entries(cells).map(
+        ([id, { title, isNumeric, isBoolean }]) => {
+            return {
+                id,
+                isNumeric,
+                isBoolean,
+                label: title,
+            }
         }
-    })
+    )
 
     return (
         <TableHead>
@@ -75,6 +78,7 @@ function TableHeader({
                     <TableCell
                         key={header.id}
                         align={header.isNumeric ? 'right' : 'left'}
+                        padding={header.isBoolean ? 'checkbox' : 'default'}
                         size="small"
                         sortDirection={orderBy === header.id ? order : false}
                     >
