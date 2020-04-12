@@ -18,7 +18,6 @@ import { IReservation } from '../reservation/type'
 const initialState = {
     rooms: null,
     room: null,
-    errorCode: null,
 }
 
 export const roomsSlice = createSlice({

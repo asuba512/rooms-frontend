@@ -1,3 +1,5 @@
+import { ICourse } from '../courses/type'
+
 export interface IUser {
     id: number
     username: string
@@ -9,6 +11,11 @@ export interface IUser {
     password: string | null
 }
 
+export interface IUserDetail extends IUser {
+    courses: ICourse[]
+}
+
 export interface UsersState {
     users: IUser[] | null
+    user: IUserDetail | null
 }

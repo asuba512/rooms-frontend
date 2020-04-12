@@ -13,7 +13,6 @@ import {
 const initialState = {
     courses: null,
     course: null,
-    errorCode: null,
 }
 
 export const coursesSlice = createSlice({

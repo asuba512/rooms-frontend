@@ -13,6 +13,7 @@ import { RootState } from '../../redux/type'
 import { Autocomplete } from '@material-ui/lab'
 import { ICourse } from '../../redux/courses/type'
 import Typography from '@material-ui/core/Typography'
+import { getUserById } from '../../redux/users/usersThunks'
 
 interface Page3Props {
     savePage: (data: IPage3Data) => void
@@ -33,11 +34,24 @@ function Page3({ savePage, goBack, data }: Page3Props) {
     )
     const [courseIdInvalid, setCourseIdInvalid] = useState(false)
 
-    const courses =
+    const [isAdmin, id] = useSelector((state: RootState) => [
+        state.auth?.role === 'admin',
+        state.auth?.id,
+    ])
+    const coursesUser =
+        useSelector((state: RootState) => state.usersAPI.user?.courses) || []
+    const coursesAdmin =
         useSelector((state: RootState) => state.coursesAPI.courses) || []
+    const courses = isAdmin ? coursesAdmin : coursesUser
+
     const dispatch = useDispatch()
+
     useEffect(() => {
-        dispatch(getCourses())
+        if (isAdmin) {
+            dispatch(getCourses())
+        } else if (id) {
+            dispatch(getUserById({ id }))
+        }
     }, [dispatch])
 
     const submitHandler = (e: React.FormEvent) => {

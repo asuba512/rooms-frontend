@@ -16,6 +16,23 @@ export const getUsers = createAsyncThunk('users/getAll', (arg, thunkAPI) => {
         })
 })
 
+export const getUserById = createAsyncThunk(
+    'users/getById',
+    ({ id }: { id: number }, thunkAPI) => {
+        return axios
+            .get(`${process.env.REACT_APP_API_BASE_URL}/api/user/${id}`)
+            .then((response) => {
+                return {
+                    ...response.data,
+                    courses: response.data.subjects,
+                }
+            })
+            .catch((error) => {
+                return thunkAPI.rejectWithValue(false)
+            })
+    }
+)
+
 export const createUser = createAsyncThunk(
     'users/createUser',
     (arg: IUser, thunkAPI) => {

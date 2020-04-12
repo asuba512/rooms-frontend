@@ -1,16 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { IUser, UsersState } from './type'
+import { IUser, IUserDetail, UsersState } from './type'
 import {
     createUser,
     deleteBulkUsers,
     deleteUser,
     editUser,
+    getUserById,
     getUsers,
 } from './usersThunks'
 
 const initialState = {
     users: null,
-    errorCode: null,
+    user: null,
 }
 
 export const usersSlice = createSlice({
@@ -23,6 +24,12 @@ export const usersSlice = createSlice({
             { payload }: PayloadAction<IUser[]>
         ) => {
             state.users = payload
+        },
+        [getUserById.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IUserDetail>
+        ) => {
+            state.user = payload
         },
         [createUser.fulfilled.type]: (
             state,
