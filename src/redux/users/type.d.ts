@@ -9,6 +9,7 @@ export interface IUser {
     titleBefore: string | null
     titleAfter: string | null
     password: string | null
+    isAdmin: boolean | ''
 }
 
 export interface IUserDetail extends IUser {

@@ -37,6 +37,9 @@ export const createUser = createAsyncThunk(
     'users/createUser',
     (arg: IUser, thunkAPI) => {
         arg.password = Math.random().toString(36).slice(-8)
+        if (arg.isAdmin === '') {
+            arg.isAdmin = false
+        }
         return axios
             .post(`${process.env.REACT_APP_API_BASE_URL}/api/user`, arg)
             .then((response) => {
