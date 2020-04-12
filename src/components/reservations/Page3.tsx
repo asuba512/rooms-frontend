@@ -52,7 +52,7 @@ function Page3({ savePage, goBack, data }: Page3Props) {
         } else if (id) {
             dispatch(getUserById({ id }))
         }
-    }, [dispatch])
+    }, [dispatch, isAdmin, id])
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault()
