@@ -39,7 +39,7 @@ function ReservationWizard() {
         'Select Rooms',
         'Add Details',
     ]
-    const [activeStep, setActiveStep] = useState(2)
+    const [activeStep, setActiveStep] = useState(0)
 
     const [page1Data, setPage1Data] = useState(
         undefined as IPage1Data | undefined
