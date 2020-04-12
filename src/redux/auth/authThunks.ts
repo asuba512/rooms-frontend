@@ -10,7 +10,7 @@ export const getUserToken = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .post(`${process.env.REACT_APP_BASE_API_URL}/api/token`, {
+            .post(`${process.env.REACT_APP_API_BASE_URL}/api/token`, {
                 username,
                 password,
             })

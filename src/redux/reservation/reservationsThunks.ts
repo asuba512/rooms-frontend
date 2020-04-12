@@ -7,7 +7,7 @@ export const getReservations = createAsyncThunk(
     'reservations/getAll',
     (arg, thunkAPI) => {
         return axios
-            .get(`${process.env.REACT_APP_BASE_API_URL}/api/reservation`)
+            .get(`${process.env.REACT_APP_API_BASE_URL}/api/reservation`)
             .then((response) => {
                 return response.data
             })
@@ -43,7 +43,7 @@ export const createReservation = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .post(`${process.env.REACT_APP_BASE_API_URL}/api/reservation`, {
+            .post(`${process.env.REACT_APP_API_BASE_URL}/api/reservation`, {
                 start,
                 end,
                 times: numberOfWeeks,
@@ -68,7 +68,7 @@ export const deleteReservation = createAsyncThunk(
     (id: number, thunkAPI) => {
         return axios
             .delete(
-                `${process.env.REACT_APP_BASE_API_URL}/api/reservation/${id}`
+                `${process.env.REACT_APP_API_BASE_URL}/api/reservation/${id}`
             )
             .then((response) => {
                 return id
@@ -88,7 +88,7 @@ export const deleteBulkReservations = createAsyncThunk(
     'reservations/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/reservation`, {
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/reservation`, {
                 data: ids,
             })
             .then((response) => {

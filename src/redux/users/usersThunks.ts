@@ -6,7 +6,7 @@ import { IUser } from './type'
 
 export const getUsers = createAsyncThunk('users/getAll', (arg, thunkAPI) => {
     return axios
-        .get(`${process.env.REACT_APP_BASE_API_URL}/api/user`)
+        .get(`${process.env.REACT_APP_API_BASE_URL}/api/user`)
         .then((response) => {
             return response.data
         })
@@ -21,7 +21,7 @@ export const createUser = createAsyncThunk(
     (arg: IUser, thunkAPI) => {
         arg.password = Math.random().toString(36).slice(-8)
         return axios
-            .post(`${process.env.REACT_APP_BASE_API_URL}/api/user`, arg)
+            .post(`${process.env.REACT_APP_API_BASE_URL}/api/user`, arg)
             .then((response) => {
                 const id = response.data
                 return {
@@ -42,7 +42,7 @@ export const editUser = createAsyncThunk(
     (arg: IUser, thunkAPI) => {
         const { id, ...data } = arg
         return axios
-            .put(`${process.env.REACT_APP_BASE_API_URL}/api/user/${id}`, data)
+            .put(`${process.env.REACT_APP_API_BASE_URL}/api/user/${id}`, data)
             .then((response) => {
                 return arg
             })
@@ -56,7 +56,7 @@ export const deleteUser = createAsyncThunk(
     'users/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/user/${id}`)
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/user/${id}`)
             .then((response) => {
                 return id
             })
@@ -75,7 +75,7 @@ export const deleteBulkUsers = createAsyncThunk(
     'users/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/user`, {
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/user`, {
                 data: ids,
             })
             .then((response) => {

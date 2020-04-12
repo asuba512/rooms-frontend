@@ -8,7 +8,7 @@ import { UNEXPECTED_ERROR } from '../constant'
 
 export const getRooms = createAsyncThunk('rooms/getAll', (arg, thunkAPI) => {
     return axios
-        .get(`${process.env.REACT_APP_BASE_API_URL}/api/room`)
+        .get(`${process.env.REACT_APP_API_BASE_URL}/api/room`)
         .then((response) => {
             return response.data
         })
@@ -22,7 +22,7 @@ export const getRoomById = createAsyncThunk(
     'rooms/getById',
     (id: number, thunkAPI) => {
         return axios
-            .get(`${process.env.REACT_APP_BASE_API_URL}/api/room/${id}`)
+            .get(`${process.env.REACT_APP_API_BASE_URL}/api/room/${id}`)
             .then((response) => {
                 return response.data
             })
@@ -41,7 +41,7 @@ export const getRoomSchedule = createAsyncThunk(
     ) => {
         return axios
             .get(
-                `${process.env.REACT_APP_BASE_API_URL}/api/room/${id}/schedule`,
+                `${process.env.REACT_APP_API_BASE_URL}/api/room/${id}/schedule`,
                 {
                     params: { start: start, end: end },
                 }
@@ -61,7 +61,7 @@ export const createRoom = createAsyncThunk(
     (arg: IRoom, thunksAPI) => {
         arg.roomType = Number(arg.roomType)
         return axios
-            .post(`${process.env.REACT_APP_BASE_API_URL}/api/room/`, arg)
+            .post(`${process.env.REACT_APP_API_BASE_URL}/api/room/`, arg)
             .then((response) => {
                 const id = response.data
                 return {
@@ -82,7 +82,7 @@ export const editRoom = createAsyncThunk(
         arg.roomType = Number(arg.roomType)
         const { id, ...data } = arg
         return axios
-            .put(`${process.env.REACT_APP_BASE_API_URL}/api/room/${id}/`, data)
+            .put(`${process.env.REACT_APP_API_BASE_URL}/api/room/${id}/`, data)
             .then((response) => {
                 return arg
             })
@@ -97,7 +97,7 @@ export const deleteRoom = createAsyncThunk(
     'rooms/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/room/${id}`)
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/room/${id}`)
             .then((response) => {
                 return id
             })
@@ -116,7 +116,7 @@ export const deleteBulkRooms = createAsyncThunk(
     'rooms/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/room`, {
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/room`, {
                 data: ids,
             })
             .then((response) => {
@@ -148,7 +148,7 @@ export const getAvailableRooms = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .get(`${process.env.REACT_APP_BASE_API_URL}/api/room/filter`, {
+            .get(`${process.env.REACT_APP_API_BASE_URL}/api/room/filter`, {
                 params: {
                     start,
                     end,
@@ -174,7 +174,7 @@ export const createEquipment = createAsyncThunk(
     ({ roomId, data }: { roomId: number; data: IEquipment }, thunksAPI) => {
         return axios
             .post(
-                `${process.env.REACT_APP_BASE_API_URL}/api/room/${roomId}/equipment`,
+                `${process.env.REACT_APP_API_BASE_URL}/api/room/${roomId}/equipment`,
                 data
             )
             .then((response) => {
@@ -197,7 +197,7 @@ export const editEquipment = createAsyncThunk(
         const { id, ...data } = arg
         return axios
             .put(
-                `${process.env.REACT_APP_BASE_API_URL}/api/equipment/${id}/`,
+                `${process.env.REACT_APP_API_BASE_URL}/api/equipment/${id}/`,
                 data
             )
             .then((response) => {
@@ -214,7 +214,7 @@ export const deleteEquipment = createAsyncThunk(
     'rooms/deleteEquipment',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/equipment/${id}`)
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/equipment/${id}`)
             .then((response) => {
                 return id
             })

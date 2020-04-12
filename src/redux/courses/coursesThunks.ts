@@ -8,7 +8,7 @@ export const getCourses = createAsyncThunk(
     'courses/getAll',
     (arg, thunkAPI) => {
         return axios
-            .get(`${process.env.REACT_APP_BASE_API_URL}/api/subject`)
+            .get(`${process.env.REACT_APP_API_BASE_URL}/api/subject`)
             .then((response) => {
                 return response.data
             })
@@ -23,7 +23,7 @@ export const getCourseById = createAsyncThunk(
     'courses/getById',
     (arg: number, thunkAPI) => {
         return axios
-            .get(`${process.env.REACT_APP_BASE_API_URL}/api/subject/${arg}`)
+            .get(`${process.env.REACT_APP_API_BASE_URL}/api/subject/${arg}`)
             .then((response) => {
                 return response.data
             })
@@ -38,7 +38,7 @@ export const createCourse = createAsyncThunk(
     'courses/createCourse',
     (arg: ICourse, thunkAPI) => {
         return axios
-            .post(`${process.env.REACT_APP_BASE_API_URL}/api/subject`, arg)
+            .post(`${process.env.REACT_APP_API_BASE_URL}/api/subject`, arg)
             .then((response) => {
                 const id = response.data
                 return { ...arg, id }
@@ -56,7 +56,7 @@ export const editCourse = createAsyncThunk(
         const { id, ...data } = arg
         return axios
             .put(
-                `${process.env.REACT_APP_BASE_API_URL}/api/subject/${id}`,
+                `${process.env.REACT_APP_API_BASE_URL}/api/subject/${id}`,
                 data
             )
             .then((response) => {
@@ -73,7 +73,7 @@ export const deleteCourse = createAsyncThunk(
     'courses/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/subject/${id}`)
+            .delete(`${process.env.REACT_APP_API_BASE_URL}/api/subject/${id}`)
             .then((response) => {
                 return id
             })
