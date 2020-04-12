@@ -9,7 +9,11 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         content: {
+            width: '100%',
             padding: theme.spacing(2),
+        },
+        scrollable: {
+            overflowX: 'scroll',
         },
     })
 )
@@ -27,11 +31,13 @@ function FullSchedule() {
 
     return (
         <Paper className={classes.content}>
-            <Schedule
-                title="Schedule"
-                events={reservationState?.reservations || []}
-                onRangeChange={undefined}
-            />
+            <div className={classes.scrollable}>
+                <Schedule
+                    title="Schedule"
+                    events={reservationState?.reservations || []}
+                    onRangeChange={undefined}
+                />
+            </div>
         </Paper>
     )
 }
