@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: lighten(theme.palette.secondary.light, 0.85),
         },
         selected: {
-            flex: '1 1 0',
+            flex: '1 1 100%',
         },
         title: {
-            flex: '1 1 0',
+            flex: '1 1 100%',
             [theme.breakpoints.down('xs')]: {
                 display: 'none',
             },
@@ -58,7 +58,7 @@ interface EnhancedTableToolbarProps {
     filterChanged: (filter: string) => void
     canAddNewItem?: boolean
     onAddNew?: (data: any) => void
-    onDeleteBulk: () => void
+    onDeleteBulk?: () => void
 }
 
 const TableToolbar = ({

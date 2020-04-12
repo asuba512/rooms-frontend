@@ -7,6 +7,7 @@ export interface ICell {
     title: string
     isNumeric?: boolean
     isBoolean?: boolean
+    isDate?: boolean
     isOptional?: boolean
     allowedValues?: { [enumValue: string]: string }
 }

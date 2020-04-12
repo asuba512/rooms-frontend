@@ -127,6 +127,44 @@ export const deleteBulkRooms = createAsyncThunk(
     }
 )
 
+export const getAvailableRooms = createAsyncThunk(
+    'rooms/getAvailable',
+    (
+        {
+            start,
+            end,
+            numberOfWeeks,
+            repeatsIn,
+            capacity,
+        }: {
+            start: string
+            end: string
+            numberOfWeeks: number
+            repeatsIn: number
+            capacity: number
+        },
+        thunkAPI
+    ) => {
+        return axios
+            .get('https://wap-rooms.herokuapp.com/api/room/filter', {
+                params: {
+                    start,
+                    end,
+                    n: numberOfWeeks,
+                    gap: repeatsIn,
+                    capacity,
+                },
+            })
+            .then((response) => {
+                return response.data
+            })
+            .catch((error) => {
+                toast.error(UNEXPECTED_ERROR)
+                return thunkAPI.rejectWithValue(false)
+            })
+    }
+)
+
 // Equipment
 
 export const createEquipment = createAsyncThunk(

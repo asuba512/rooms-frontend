@@ -36,10 +36,9 @@ import { TransitionProps } from '@material-ui/core/transitions'
 import { IRoomDetail } from '../../redux/rooms/type'
 import { mapRoomTypeEnumToString } from '../../redux/rooms/utils'
 
-import './react-big-calendar.css'
-import Schedule from './Schedule'
 import { editRoom } from '../../redux/rooms/roomsThunks'
 import EquipmentTable from './EquipmentTable'
+import RoomSchedule from './RoomSchedule'
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -381,7 +380,7 @@ function RoomDetail({ room, isAdmin, handleClose }: RoomDetailProps) {
                         </Grid>
                         <Grid item className={classes.gridColumnFill}>
                             <Paper className={classes.paper}>
-                                <Schedule roomId={room?.id} />
+                                <RoomSchedule roomId={room?.id} />
                             </Paper>
                         </Grid>
                     </Grid>

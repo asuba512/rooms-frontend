@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import {
-    IRoom,
-    IRoomDetail,
-    RoomsState,
-    IScheduleItem,
-    IEquipment,
-} from './type'
+import { IRoom, IRoomDetail, RoomsState, IEquipment } from './type'
 import {
     getRooms,
     deleteRoom,
@@ -17,7 +11,9 @@ import {
     deleteEquipment,
     createEquipment,
     editEquipment,
+    getAvailableRooms,
 } from './roomsThunks'
+import { IReservation } from '../reservation/type'
 
 const initialState = {
     rooms: null,
@@ -54,7 +50,7 @@ export const roomsSlice = createSlice({
         },
         [getRoomSchedule.fulfilled.type]: (
             state,
-            { payload }: PayloadAction<IScheduleItem[]>
+            { payload }: PayloadAction<IReservation[]>
         ) => {
             if (state.room) {
                 state.room.schedule = payload
@@ -115,6 +111,12 @@ export const roomsSlice = createSlice({
                 }
             }
             return state
+        },
+        [getAvailableRooms.fulfilled.type]: (
+            state,
+            { payload }: PayloadAction<IRoom[]>
+        ) => {
+            state.rooms = payload
         },
         [createEquipment.fulfilled.type]: (
             state,

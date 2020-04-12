@@ -7,6 +7,7 @@ import { createUser, editUser, getUsers } from '../../redux/users/usersThunks'
 import { deleteBulkUsers, deleteUser } from '../../redux/users/usersThunks'
 import { toast } from 'react-toastify'
 import { IUser } from '../../redux/users/type'
+import { IRow } from '../TableComponent/type'
 
 function UsersTable() {
     const dispatch = useDispatch()
@@ -49,8 +50,8 @@ function UsersTable() {
         dispatch(deleteBulkUsers(ids))
     }
 
-    const canBeDeleted = (id: number) => {
-        return id !== currentUserId
+    const canBeDeleted = (item: IRow) => {
+        return item.id !== currentUserId
     }
 
     useEffect(() => {

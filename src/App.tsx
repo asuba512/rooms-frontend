@@ -18,6 +18,9 @@ import { RootState } from './redux/type'
 import UsersTable from './components/users/UsersTable'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import useTheme from '@material-ui/core/styles/useTheme'
+import Dashboard from './components/Dashboard'
+import ReservationWizard from './components/reservations/ReservationWizard'
+import ReservationsTable from './components/reservations/ReservationsTable'
 
 function App() {
     const classes = mainLayoutStyles()
@@ -58,7 +61,7 @@ function App() {
                             </Route>
                             <Route exact path="/home">
                                 {!isAuthorized && <Redirect to="/login" />}
-                                <h1>Home</h1>
+                                <Dashboard />
                             </Route>
                             <Route path="/users">
                                 {!isAuthorized && <Redirect to="/login" />}
@@ -74,7 +77,11 @@ function App() {
                             </Route>
                             <Route path="/reservation">
                                 {!isAuthorized && <Redirect to="/login" />}
-                                <h1>Reservation</h1>
+                                <ReservationWizard />
+                            </Route>
+                            <Route path="/reservations">
+                                {!isAuthorized && <Redirect to="/login" />}
+                                <ReservationsTable />
                             </Route>
                             <Route path="/">
                                 {!isAuthorized ? (

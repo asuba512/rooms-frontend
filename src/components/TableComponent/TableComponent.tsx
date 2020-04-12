@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
@@ -22,6 +22,7 @@ import { Typography } from '@material-ui/core'
 import TableEditableRow from './TableEditableRow'
 import { toast } from 'react-toastify'
 import { ICell, ICells, IRow } from './type'
+import { Moment } from 'moment'
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
 
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         paper: {
             width: '100%',
-            marginBottom: theme.spacing(2),
+            // marginBottom: theme.spacing(2),
         },
         table: {
             minWidth: 300,
@@ -69,7 +70,10 @@ interface TableComponentProps {
     onViewDetail?: (id: number) => void
     onDelete?: (id: number) => void
     onDeleteBulk?: (ids: number[]) => void
-    canBeDeleted?: (id: number) => boolean
+    canBeDeleted?: (row: IRow) => boolean
+    allowSelection?: boolean
+    selectedOutput?: number[]
+    setSelectedOutput?: (ids: number[]) => void
 }
 
 function TableComponent({
@@ -84,19 +88,22 @@ function TableComponent({
     onDelete,
     onDeleteBulk,
     canBeDeleted,
+    allowSelection,
+    selectedOutput,
+    setSelectedOutput,
 }: TableComponentProps) {
     const classes = useStyles()
-    const [selected, setSelected] = React.useState<number[]>([])
-    const [deleted, setDeleted] = React.useState<number[]>([])
-    const [order, setOrder] = React.useState<Order>('asc')
-    const [orderBy, setOrderBy] = React.useState<string>(defaultSort)
-    const [filter, setFilter] = React.useState<string>('')
-    const [filteredData, setFilteredData] = React.useState<IRow[]>(rowData)
-    const [page, setPage] = React.useState(0)
-    const [rowsPerPage, setRowsPerPage] = React.useState(10)
+    const [selected, setSelected] = useState<number[]>(selectedOutput || [])
+    const [deleted, setDeleted] = useState<number[]>([])
+    const [order, setOrder] = useState<Order>('asc')
+    const [orderBy, setOrderBy] = useState<string>(defaultSort)
+    const [filter, setFilter] = useState<string>('')
+    const [filteredData, setFilteredData] = useState<IRow[]>(rowData)
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
 
-    const [addNewItem, setAddNewItem] = React.useState(false)
-    const [editingItem, setEditingItem] = React.useState(-1)
+    const [addNewItem, setAddNewItem] = useState(false)
+    const [editingItem, setEditingItem] = useState(-1)
 
     const additionalColspan =
         (onViewDetail ? 1 : 0) + (onDelete ? 1 : 0) + (onEdit ? 1 : 0)
@@ -114,11 +121,19 @@ function TableComponent({
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         if (event.target.checked) {
-            const newSelected = filteredData.map((n) => n.id)
+            const newSelected = filteredData
+                .filter((row) => (canBeDeleted ? canBeDeleted(row) : true))
+                .map((n) => n.id)
             setSelected(newSelected)
+            if (setSelectedOutput) {
+                setSelectedOutput(newSelected)
+            }
             return
         }
         setSelected([])
+        if (setSelectedOutput) {
+            setSelectedOutput([])
+        }
     }
 
     const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
@@ -130,15 +145,16 @@ function TableComponent({
             newSelected = selected.filter((selectedId) => id !== selectedId)
         }
         setSelected(newSelected)
+        if (setSelectedOutput) {
+            setSelectedOutput(newSelected)
+        }
     }
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage)
     }
 
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10))
         setPage(0)
     }
@@ -214,7 +230,11 @@ function TableComponent({
     )
 
     const getRowEntries = (row: { [key: string]: any }, cells: ICells) => {
-        const entries: [string, number | string | boolean, ICell][] = []
+        const entries: [
+            string,
+            number | string | boolean | Moment,
+            ICell
+        ][] = []
         Object.entries(cells).forEach(([key, value]) => {
             entries.push([key, row[key], value])
         })
@@ -288,9 +308,12 @@ function TableComponent({
     const isDeleted = (id: number) => deleted.indexOf(id) !== -1
 
     useEffect(() => {
-        setSelected([])
         handleChangeFilter(filter)
     }, [rowData, filter, handleChangeFilter])
+
+    useEffect(() => {
+        setSelected(selectedOutput || [])
+    }, [rowData, selectedOutput])
 
     return (
         <div className={classes.root}>
@@ -302,7 +325,7 @@ function TableComponent({
                     filterChanged={handleChangeFilter}
                     canAddNewItem={onAddNew !== undefined}
                     onAddNew={startAddNewItemHandler}
-                    onDeleteBulk={handleDeleteBulk}
+                    onDeleteBulk={onDeleteBulk && handleDeleteBulk}
                 />
                 <TableContainer style={{ maxHeight: '74vh' }}>
                     <Table
@@ -314,7 +337,9 @@ function TableComponent({
                         <TableHeader
                             classes={classes}
                             cells={cells}
-                            selectionAllowed={onDeleteBulk !== undefined}
+                            selectionAllowed={
+                                allowSelection || onDeleteBulk !== undefined
+                            }
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
@@ -361,8 +386,7 @@ function TableComponent({
                                         )
                                         const labelId = `table-checkbox-${index}`
                                         const isDeleteDisabled =
-                                            canBeDeleted &&
-                                            !canBeDeleted(row.id)
+                                            canBeDeleted && !canBeDeleted(row)
                                         return onEdit &&
                                             editingItem === row.id ? (
                                             <TableEditableRow
@@ -392,7 +416,8 @@ function TableComponent({
                                                 key={row.id}
                                                 selected={isItemSelected}
                                             >
-                                                {onDeleteBulk && (
+                                                {(onDeleteBulk ||
+                                                    allowSelection) && (
                                                     <TableCell padding="checkbox">
                                                         <div>
                                                             <Tooltip
@@ -463,6 +488,10 @@ function TableComponent({
                                                                                 disabled
                                                                             />
                                                                         )) ||
+                                                                        (cell?.isDate &&
+                                                                            (value as Moment).format(
+                                                                                'LLL'
+                                                                            )) ||
                                                                         value}
                                                                 </div>
                                                             </TableCell>

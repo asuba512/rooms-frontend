@@ -1,4 +1,4 @@
-import { ICourse } from '../courses/type'
+import { IReservation } from '../reservation/type'
 
 export interface IRoom {
     id: number
@@ -16,17 +16,9 @@ interface IEquipment {
     quantity: number
 }
 
-interface IScheduleItem {
-    type: number
-    name: string
-    start: Date
-    end: Date
-    subject: ICourse | null
-}
-
 export interface IRoomDetail extends IRoom {
     equipment?: IEquipment[]
-    schedule?: IScheduleItem[]
+    schedule?: IReservation[]
 }
 
 export interface RoomsState {

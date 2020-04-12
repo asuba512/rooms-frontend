@@ -11,6 +11,8 @@ import { getUserTokenData } from './utils/getUserTokenData'
 import 'react-toastify/dist/ReactToastify.css'
 import { ThemeProvider } from '@material-ui/core'
 import { createMuiTheme } from '@material-ui/core/styles'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import MomentUtils from '@date-io/moment'
 
 const userData = getUserTokenData()
 if (userData) {
@@ -31,12 +33,18 @@ const theme = createMuiTheme({
 })
 
 ReactDOM.render(
-    <Provider store={store}>
-        <ThemeProvider theme={theme}>
-            <LoadingBar style={{ zIndex: 10000 }} showFastActions updateTime={1}/>
-            <App />
-            <ToastContainer autoClose={false} />
-        </ThemeProvider>
-    </Provider>,
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Provider store={store}>
+            <ThemeProvider theme={theme}>
+                <LoadingBar
+                    style={{ zIndex: 10000 }}
+                    showFastActions
+                    updateTime={1}
+                />
+                <App />
+                <ToastContainer autoClose={false} />
+            </ThemeProvider>
+        </Provider>
+    </MuiPickersUtilsProvider>,
     document.getElementById('root')
 )

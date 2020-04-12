@@ -6,6 +6,7 @@ import CreateIcon from '@material-ui/icons/Create'
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom'
 import SchoolIcon from '@material-ui/icons/School'
 import GroupIcon from '@material-ui/icons/Group'
+import EventIcon from '@material-ui/icons/Event'
 import ListItemRouterLink from './ListItemRouterLink'
 import mainLayoutStyles from '../utils/mainLayoutStyles'
 
@@ -34,6 +35,11 @@ function SideMenu({ menuOpen, setMenuOpen }: SideMenuProps) {
                     text="Reserve a Room"
                     to="/reservation"
                     icon={<CreateIcon />}
+                />
+                <ListItemRouterLink
+                    text="Reservations"
+                    to="/reservations"
+                    icon={<EventIcon />}
                 />
                 <ListItemRouterLink
                     text="Rooms"
