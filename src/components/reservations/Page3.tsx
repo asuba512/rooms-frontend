@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { Button, FormControlLabel, Radio, Switch } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import { IPage3Data } from './ReservationWizard'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
@@ -12,6 +12,7 @@ import { getCourses } from '../../redux/courses/coursesThunks'
 import { RootState } from '../../redux/type'
 import { Autocomplete } from '@material-ui/lab'
 import { ICourse } from '../../redux/courses/type'
+import Typography from '@material-ui/core/Typography'
 
 interface Page3Props {
     savePage: (data: IPage3Data) => void
@@ -65,6 +66,7 @@ function Page3({ savePage, goBack, data }: Page3Props) {
                 <Paper className={classes.content}>
                     <Grid item className={classes.gridRow}>
                         <Grid container className={classes.gridColumn}>
+                            <Typography variant="h6">Other Details</Typography>
                             <TextField
                                 error={nameInvalid}
                                 variant="outlined"

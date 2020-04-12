@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import TableComponent from '../TableComponent/TableComponent'
 import { RootState } from '../../redux/type'
 import {
-    getCourses,
+    createCourse,
     deleteBulkCourses,
     deleteCourse,
-    createCourse,
-    getCourseById,
     editCourse,
+    getCourseById,
+    getCourses,
 } from '../../redux/courses/coursesThunks'
 import { ICourse } from '../../redux/courses/type'
 import CourseDetail from './CourseDetail'

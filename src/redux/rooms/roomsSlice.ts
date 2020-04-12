@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { IRoom, IRoomDetail, RoomsState, IEquipment } from './type'
+import { IEquipment, IRoom, IRoomDetail, RoomsState } from './type'
 import {
-    getRooms,
-    deleteRoom,
-    deleteBulkRooms,
-    getRoomById,
-    getRoomSchedule,
-    editRoom,
-    createRoom,
-    deleteEquipment,
     createEquipment,
+    createRoom,
+    deleteBulkRooms,
+    deleteEquipment,
+    deleteRoom,
     editEquipment,
+    editRoom,
     getAvailableRooms,
+    getRoomById,
+    getRooms,
+    getRoomSchedule,
 } from './roomsThunks'
 import { IReservation } from '../reservation/type'
 
@@ -35,12 +35,6 @@ export const roomsSlice = createSlice({
             { payload }: PayloadAction<IRoom[]>
         ) => {
             state.rooms = payload
-        },
-        [getRooms.rejected.type]: (
-            state,
-            { payload }: PayloadAction<number>
-        ) => {
-            state.errorCode = payload
         },
         [getRoomById.fulfilled.type]: (
             state,

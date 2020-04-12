@@ -6,14 +6,13 @@ import { IUser } from './type'
 
 export const getUsers = createAsyncThunk('users/getAll', (arg, thunkAPI) => {
     return axios
-        .get('https://wap-rooms.herokuapp.com/api/user')
+        .get(`${process.env.REACT_APP_BASE_API_URL}/api/user`)
         .then((response) => {
             return response.data
         })
         .catch((error) => {
-            const errorCode = error.response.status
             toast.error(UNEXPECTED_ERROR)
-            return thunkAPI.rejectWithValue(errorCode)
+            return thunkAPI.rejectWithValue(false)
         })
 })
 
@@ -22,7 +21,7 @@ export const createUser = createAsyncThunk(
     (arg: IUser, thunkAPI) => {
         arg.password = Math.random().toString(36).slice(-8)
         return axios
-            .post('https://wap-rooms.herokuapp.com/api/user', arg)
+            .post(`${process.env.REACT_APP_BASE_API_URL}/api/user`, arg)
             .then((response) => {
                 const id = response.data
                 return {
@@ -43,7 +42,7 @@ export const editUser = createAsyncThunk(
     (arg: IUser, thunkAPI) => {
         const { id, ...data } = arg
         return axios
-            .put(`https://wap-rooms.herokuapp.com/api/user/${id}`, data)
+            .put(`${process.env.REACT_APP_BASE_API_URL}/api/user/${id}`, data)
             .then((response) => {
                 return arg
             })
@@ -57,7 +56,7 @@ export const deleteUser = createAsyncThunk(
     'users/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/user/${id}`)
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/user/${id}`)
             .then((response) => {
                 return id
             })
@@ -76,7 +75,9 @@ export const deleteBulkUsers = createAsyncThunk(
     'users/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/user`, { data: ids })
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/user`, {
+                data: ids,
+            })
             .then((response) => {
                 return ids
             })

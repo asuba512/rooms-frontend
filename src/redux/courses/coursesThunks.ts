@@ -8,14 +8,13 @@ export const getCourses = createAsyncThunk(
     'courses/getAll',
     (arg, thunkAPI) => {
         return axios
-            .get('https://wap-rooms.herokuapp.com/api/subject')
+            .get(`${process.env.REACT_APP_BASE_API_URL}/api/subject`)
             .then((response) => {
                 return response.data
             })
             .catch((error) => {
-                const errorCode = error.response.status
                 toast.error(UNEXPECTED_ERROR)
-                return thunkAPI.rejectWithValue(errorCode)
+                return thunkAPI.rejectWithValue(false)
             })
     }
 )
@@ -24,7 +23,7 @@ export const getCourseById = createAsyncThunk(
     'courses/getById',
     (arg: number, thunkAPI) => {
         return axios
-            .get(`https://wap-rooms.herokuapp.com/api/subject/${arg}`)
+            .get(`${process.env.REACT_APP_BASE_API_URL}/api/subject/${arg}`)
             .then((response) => {
                 return response.data
             })
@@ -39,7 +38,7 @@ export const createCourse = createAsyncThunk(
     'courses/createCourse',
     (arg: ICourse, thunkAPI) => {
         return axios
-            .post('https://wap-rooms.herokuapp.com/api/subject', arg)
+            .post(`${process.env.REACT_APP_BASE_API_URL}/api/subject`, arg)
             .then((response) => {
                 const id = response.data
                 return { ...arg, id }
@@ -56,7 +55,10 @@ export const editCourse = createAsyncThunk(
     (arg: ICourse, thunkAPI) => {
         const { id, ...data } = arg
         return axios
-            .put(`https://wap-rooms.herokuapp.com/api/subject/${id}`, data)
+            .put(
+                `${process.env.REACT_APP_BASE_API_URL}/api/subject/${id}`,
+                data
+            )
             .then((response) => {
                 return arg
             })
@@ -71,15 +73,11 @@ export const deleteCourse = createAsyncThunk(
     'courses/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/subject/${id}`)
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/subject/${id}`)
             .then((response) => {
                 return id
             })
             .catch((error) => {
-                const errorCode = error.response.status
-                if (errorCode === 404) {
-                    return id
-                }
                 toast.error(UNEXPECTED_ERROR)
                 return thunkAPI.rejectWithValue(id)
             })

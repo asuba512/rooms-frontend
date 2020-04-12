@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Switch, FormControlLabel, Radio } from '@material-ui/core'
+import { Button, FormControlLabel, Radio, Switch } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import wizardStyles from './wizardStyles'
 import { DateTimePicker } from '@material-ui/pickers'
@@ -14,6 +14,7 @@ import { IPage1Data } from './ReservationWizard'
 import Paper from '@material-ui/core/Paper'
 import { Moment } from 'moment'
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
+import Typography from '@material-ui/core/Typography'
 
 interface Page1Props {
     savePage: (data: IPage1Data) => void
@@ -78,6 +79,7 @@ function Page1({ savePage, data }: Page1Props) {
                 <Paper className={classes.content}>
                     <Grid item className={classes.gridRow}>
                         <Grid container className={classes.gridColumn}>
+                            <Typography variant="h6">Event Time</Typography>
                             <DateTimePicker
                                 required
                                 error={startDateInvalid}
@@ -111,6 +113,9 @@ function Page1({ savePage, data }: Page1Props) {
                                 disablePast
                                 clearable
                             />
+                            <Typography variant="h6">
+                                Other Parameters
+                            </Typography>
                             <div>
                                 One-time Event
                                 <Switch

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import axios from 'axios'
 
-import { KeyToClaimURI } from './keyToClaimURI'
+import { KeyToClaimURI } from '../redux/auth/keyToClaimURI'
 import { AuthState } from '../redux/type'
 
 const setAuthorizationToken = (token: string) => {

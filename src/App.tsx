@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
     BrowserRouter as Router,
-    Switch,
-    Route,
     Redirect,
+    Route,
+    Switch,
 } from 'react-router-dom'
 
 import TopBar from './components/TopBar'
 import LoginComponent from './components/LoginComponent'
-import mainLayoutStyles from './utils/mainLayoutStyles'
+import mainLayoutStyles from './components/mainLayoutStyles'
 import { CssBaseline } from '@material-ui/core'
 import SideMenu from './components/SideMenu'
 import RoomsTable from './components/rooms/RoomsTable'
@@ -18,7 +18,7 @@ import { RootState } from './redux/type'
 import UsersTable from './components/users/UsersTable'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import useTheme from '@material-ui/core/styles/useTheme'
-import Dashboard from './components/Dashboard'
+import FullSchedule from './components/FullSchedule'
 import ReservationWizard from './components/reservations/ReservationWizard'
 import ReservationsTable from './components/reservations/ReservationsTable'
 
@@ -61,7 +61,7 @@ function App() {
                             </Route>
                             <Route exact path="/home">
                                 {!isAuthorized && <Redirect to="/login" />}
-                                <Dashboard />
+                                <FullSchedule />
                             </Route>
                             <Route path="/users">
                                 {!isAuthorized && <Redirect to="/login" />}

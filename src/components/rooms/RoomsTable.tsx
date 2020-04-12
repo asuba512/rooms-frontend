@@ -5,12 +5,12 @@ import TableComponent from '../TableComponent/TableComponent'
 import { RootState } from '../../redux/type'
 import { roomTypesAsObject } from '../../redux/rooms/utils'
 import {
-    getRooms,
+    createRoom,
     deleteBulkRooms,
     deleteRoom,
-    getRoomById,
-    createRoom,
     editRoom,
+    getRoomById,
+    getRooms,
 } from '../../redux/rooms/roomsThunks'
 import RoomDetail from './RoomDetail'
 import { destroyRoomDetailActionCreator } from '../../redux/store'

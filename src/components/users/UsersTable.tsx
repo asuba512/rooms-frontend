@@ -3,8 +3,13 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import TableComponent from '../TableComponent/TableComponent'
 import { RootState } from '../../redux/type'
-import { createUser, editUser, getUsers } from '../../redux/users/usersThunks'
-import { deleteBulkUsers, deleteUser } from '../../redux/users/usersThunks'
+import {
+    createUser,
+    deleteBulkUsers,
+    deleteUser,
+    editUser,
+    getUsers,
+} from '../../redux/users/usersThunks'
 import { toast } from 'react-toastify'
 import { IUser } from '../../redux/users/type'
 import { IRow } from '../TableComponent/type'
@@ -25,7 +30,7 @@ function UsersTable() {
         lastName: { title: 'Last Name' },
         titleAfter: { title: 'Title(s) after', isOptional: true },
         email: { title: 'E-Mail' },
-        isAdmin: { title: 'Admin', isBoolean: true },
+        isAdmin: { title: 'Admin', isBoolean: true, isOptional: true },
     }
 
     const onAddNewHandler = (data: IUser) => {

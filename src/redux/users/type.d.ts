@@ -1,5 +1,3 @@
-import { ICourse } from '../courses/type'
-
 export interface IUser {
     id: number
     username: string
@@ -13,5 +11,4 @@ export interface IUser {
 
 export interface UsersState {
     users: IUser[] | null
-    errorCode: number | null
 }

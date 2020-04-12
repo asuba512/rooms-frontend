@@ -24,5 +24,4 @@ export interface IRoomDetail extends IRoom {
 export interface RoomsState {
     rooms: IRoom[] | null
     room: IRoomDetail | null
-    errorCode: number | null
 }

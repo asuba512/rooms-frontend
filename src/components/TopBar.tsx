@@ -11,7 +11,7 @@ import ExitToApp from '@material-ui/icons/ExitToApp'
 import Menu from '@material-ui/icons/Menu'
 import { logoutUserActionCreator } from '../redux/store'
 import { useDispatch, useSelector } from 'react-redux'
-import mainLayoutStyles from '../utils/mainLayoutStyles'
+import mainLayoutStyles from './mainLayoutStyles'
 import { RootState } from '../redux/type'
 import { removeUserToken } from '../utils/getUserTokenData'
 

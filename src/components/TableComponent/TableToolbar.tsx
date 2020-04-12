@@ -17,7 +17,7 @@ import Clear from '@material-ui/icons/Clear'
 import Search from '@material-ui/icons/Search'
 import AddIcon from '@material-ui/icons/Add'
 
-import DeleteButton from '../DeleteButton'
+import DeleteButton from './DeleteButton'
 import { Button } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider'
 

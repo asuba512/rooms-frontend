@@ -12,5 +12,4 @@ interface ICourseDetail extends ICourse {
 export interface CoursesState {
     courses: ICourse[] | null
     course: ICourseDetail | null
-    errorCode: number | null
 }

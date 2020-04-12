@@ -1,21 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { IRoomDetail, IRoom, IEquipment } from './type'
+import { IEquipment, IRoom, IRoomDetail } from './type'
 import { UNEXPECTED_ERROR } from '../constant'
 
 // Rooms
 
 export const getRooms = createAsyncThunk('rooms/getAll', (arg, thunkAPI) => {
     return axios
-        .get('https://wap-rooms.herokuapp.com/api/room')
+        .get(`${process.env.REACT_APP_BASE_API_URL}/api/room`)
         .then((response) => {
             return response.data
         })
         .catch((error) => {
-            const errorCode = error.response.status
             toast.error(UNEXPECTED_ERROR)
-            return thunkAPI.rejectWithValue(errorCode)
+            return thunkAPI.rejectWithValue(false)
         })
 })
 
@@ -23,14 +22,13 @@ export const getRoomById = createAsyncThunk(
     'rooms/getById',
     (id: number, thunkAPI) => {
         return axios
-            .get(`https://wap-rooms.herokuapp.com/api/room/${id}`)
+            .get(`${process.env.REACT_APP_BASE_API_URL}/api/room/${id}`)
             .then((response) => {
                 return response.data
             })
             .catch((error) => {
-                const errorCode = error.response.status
                 toast.error(UNEXPECTED_ERROR)
-                return thunkAPI.rejectWithValue(errorCode)
+                return thunkAPI.rejectWithValue(false)
             })
     }
 )
@@ -42,16 +40,18 @@ export const getRoomSchedule = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .get(`https://wap-rooms.herokuapp.com/api/room/${id}/schedule`, {
-                params: { start: start, end: end },
-            })
+            .get(
+                `${process.env.REACT_APP_BASE_API_URL}/api/room/${id}/schedule`,
+                {
+                    params: { start: start, end: end },
+                }
+            )
             .then((response) => {
                 return response.data
             })
             .catch((error) => {
-                const errorCode = error.response.status
                 toast.error(UNEXPECTED_ERROR)
-                return thunkAPI.rejectWithValue(errorCode)
+                return thunkAPI.rejectWithValue(false)
             })
     }
 )
@@ -61,7 +61,7 @@ export const createRoom = createAsyncThunk(
     (arg: IRoom, thunksAPI) => {
         arg.roomType = Number(arg.roomType)
         return axios
-            .post('https://wap-rooms.herokuapp.com/api/room/', arg)
+            .post(`${process.env.REACT_APP_BASE_API_URL}/api/room/`, arg)
             .then((response) => {
                 const id = response.data
                 return {
@@ -82,7 +82,7 @@ export const editRoom = createAsyncThunk(
         arg.roomType = Number(arg.roomType)
         const { id, ...data } = arg
         return axios
-            .put(`https://wap-rooms.herokuapp.com/api/room/${id}/`, data)
+            .put(`${process.env.REACT_APP_BASE_API_URL}/api/room/${id}/`, data)
             .then((response) => {
                 return arg
             })
@@ -97,7 +97,7 @@ export const deleteRoom = createAsyncThunk(
     'rooms/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/room/${id}`)
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/room/${id}`)
             .then((response) => {
                 return id
             })
@@ -116,7 +116,9 @@ export const deleteBulkRooms = createAsyncThunk(
     'rooms/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/room`, { data: ids })
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/room`, {
+                data: ids,
+            })
             .then((response) => {
                 return ids
             })
@@ -146,7 +148,7 @@ export const getAvailableRooms = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .get('https://wap-rooms.herokuapp.com/api/room/filter', {
+            .get(`${process.env.REACT_APP_BASE_API_URL}/api/room/filter`, {
                 params: {
                     start,
                     end,
@@ -172,7 +174,7 @@ export const createEquipment = createAsyncThunk(
     ({ roomId, data }: { roomId: number; data: IEquipment }, thunksAPI) => {
         return axios
             .post(
-                `https://wap-rooms.herokuapp.com/api/room/${roomId}/equipment`,
+                `${process.env.REACT_APP_BASE_API_URL}/api/room/${roomId}/equipment`,
                 data
             )
             .then((response) => {
@@ -194,7 +196,10 @@ export const editEquipment = createAsyncThunk(
     (arg: IEquipment, thunksAPI) => {
         const { id, ...data } = arg
         return axios
-            .put(`https://wap-rooms.herokuapp.com/api/equipment/${id}/`, data)
+            .put(
+                `${process.env.REACT_APP_BASE_API_URL}/api/equipment/${id}/`,
+                data
+            )
             .then((response) => {
                 return arg
             })
@@ -209,7 +214,7 @@ export const deleteEquipment = createAsyncThunk(
     'rooms/deleteEquipment',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/equipment/${id}`)
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/equipment/${id}`)
             .then((response) => {
                 return id
             })

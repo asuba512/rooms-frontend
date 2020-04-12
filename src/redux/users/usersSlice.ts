@@ -24,12 +24,6 @@ export const usersSlice = createSlice({
         ) => {
             state.users = payload
         },
-        [getUsers.rejected.type]: (
-            state,
-            { payload }: PayloadAction<number>
-        ) => {
-            state.errorCode = payload
-        },
         [createUser.fulfilled.type]: (
             state,
             { payload }: PayloadAction<IUser>

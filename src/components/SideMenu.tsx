@@ -8,7 +8,7 @@ import SchoolIcon from '@material-ui/icons/School'
 import GroupIcon from '@material-ui/icons/Group'
 import EventIcon from '@material-ui/icons/Event'
 import ListItemRouterLink from './ListItemRouterLink'
-import mainLayoutStyles from '../utils/mainLayoutStyles'
+import mainLayoutStyles from './mainLayoutStyles'
 
 interface SideMenuProps {
     menuOpen: boolean
@@ -27,7 +27,7 @@ function SideMenu({ menuOpen, setMenuOpen }: SideMenuProps) {
             <div className={classes.toolbarPadding} />
             <List>
                 <ListItemRouterLink
-                    text="Dashboard"
+                    text="Schedule"
                     to="/home"
                     icon={<DashboardIcon />}
                 />

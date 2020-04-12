@@ -7,7 +7,7 @@ export const getReservations = createAsyncThunk(
     'reservations/getAll',
     (arg, thunkAPI) => {
         return axios
-            .get('https://wap-rooms.herokuapp.com/api/reservation')
+            .get(`${process.env.REACT_APP_BASE_API_URL}/api/reservation`)
             .then((response) => {
                 return response.data
             })
@@ -43,7 +43,7 @@ export const createReservation = createAsyncThunk(
         thunkAPI
     ) => {
         return axios
-            .post('https://wap-rooms.herokuapp.com/api/reservation', {
+            .post(`${process.env.REACT_APP_BASE_API_URL}/api/reservation`, {
                 start,
                 end,
                 times: numberOfWeeks,
@@ -67,7 +67,9 @@ export const deleteReservation = createAsyncThunk(
     'reservations/delete',
     (id: number, thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/reservation/${id}`)
+            .delete(
+                `${process.env.REACT_APP_BASE_API_URL}/api/reservation/${id}`
+            )
             .then((response) => {
                 return id
             })
@@ -86,7 +88,7 @@ export const deleteBulkReservations = createAsyncThunk(
     'reservations/deleteBulk',
     (ids: number[], thunkAPI) => {
         return axios
-            .delete(`https://wap-rooms.herokuapp.com/api/reservation`, {
+            .delete(`${process.env.REACT_APP_BASE_API_URL}/api/reservation`, {
                 data: ids,
             })
             .then((response) => {

@@ -3,8 +3,19 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getReservations } from '../redux/reservation/reservationsThunks'
 import { RootState } from '../redux/type'
 import Schedule from './ScheduleComponent/Schedule'
+import Paper from '@material-ui/core/Paper'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-function Dashboard() {
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        content: {
+            padding: theme.spacing(2),
+        },
+    })
+)
+
+function FullSchedule() {
+    const classes = useStyles()
     const dispatch = useDispatch()
     const reservationState = useSelector(
         (state: RootState) => state.reservationsAPI
@@ -15,14 +26,14 @@ function Dashboard() {
     }, [dispatch])
 
     return (
-        <div>
+        <Paper className={classes.content}>
             <Schedule
-                title="Schedule for all rooms"
+                title="Schedule"
                 events={reservationState?.reservations || []}
                 onRangeChange={undefined}
             />
-        </div>
+        </Paper>
     )
 }
 
-export default Dashboard
+export default FullSchedule

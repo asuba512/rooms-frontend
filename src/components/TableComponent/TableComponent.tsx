@@ -15,7 +15,7 @@ import Pageview from '@material-ui/icons/Pageview'
 import EditIcon from '@material-ui/icons/Edit'
 
 import { getComparator, Order, stableSort } from '../../utils/sorting'
-import DeleteButton from '../DeleteButton'
+import DeleteButton from './DeleteButton'
 import TableToolbar from './TableToolbar'
 import TableHeader from './TableHeader'
 import { Typography } from '@material-ui/core'

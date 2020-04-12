@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ICourse, CoursesState, ICourseDetail } from './type'
+import { CoursesState, ICourse, ICourseDetail } from './type'
 import {
     createCourse,
     deleteBulkCourses,
@@ -30,12 +30,6 @@ export const coursesSlice = createSlice({
             { payload }: PayloadAction<ICourse[]>
         ) => {
             state.courses = payload
-        },
-        [getCourses.rejected.type]: (
-            state,
-            { payload }: PayloadAction<number>
-        ) => {
-            state.errorCode = payload
         },
         [getCourseById.fulfilled.type]: (
             state,

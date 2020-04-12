@@ -15,9 +15,7 @@ export interface IReservation {
     roomNames: string[] | null
 }
 
-export interface IReservationDetail extends IReservation {}
-
 export interface ReservationsState {
     reservations: IReservation[] | null
-    reservation: IReservationDetail | null
+    reservation: IReservation | null
 }
