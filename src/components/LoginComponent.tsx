@@ -112,6 +112,23 @@ function LoginComponent() {
                     </Paper>
                 </Grid>
             </Grid>
+            <Grid style={{ textAlign: 'center' }}>
+                <Typography variant="h6">Credentials for Testing</Typography>
+                <div>
+                    <Typography variant="subtitle1">Administrator:</Typography>
+                    <Typography variant="caption">
+                        Username: admin <br /> Password: admin1
+                    </Typography>
+                </div>
+                <div>
+                    <Typography variant="subtitle1">
+                        Non-administrator:
+                    </Typography>
+                    <Typography variant="caption">
+                        Username: ucitel <br /> Password: test
+                    </Typography>
+                </div>
+            </Grid>
         </Grid>
     )
 }
